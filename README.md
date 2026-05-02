@@ -261,3 +261,9 @@ docker compose down -v
 ```
 
 Not: `docker-compose.yml` icindeki sifre ve JWT key sadece lokal gelistirme icindir. Gercek ortamda secret/environment variable yonetimi kullanilmalidir.
+
+## Frontend Plani
+
+Bu API icin onerilen frontend yaklasimi `React + Vite + TypeScript`tir. Detayli ekran listesi, klasor yapisi ve gelistirme sirasi icin:
+
+[FRONTEND_PLAN.md](FRONTEND_PLAN.md)
