@@ -47,13 +47,19 @@ export function Layout() {
             </NavLink>
           )}
         </nav>
+
+        <div className="sidebar-summary">
+          <span>Backend</span>
+          <strong>ASP.NET Core API</strong>
+          <small>JWT + Role-based auth</small>
+        </div>
       </aside>
 
       <main className="main">
         <header className="topbar">
           <div>
-            <span className="muted">API</span>
-            <strong>http://localhost:5159/api</strong>
+            <span className="muted">Workspace</span>
+            <strong>Berber Randevu Yonetimi</strong>
           </div>
           {auth ? (
             <div className="user-chip">
