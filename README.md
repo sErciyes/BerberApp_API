@@ -267,3 +267,25 @@ Not: `docker-compose.yml` icindeki sifre ve JWT key sadece lokal gelistirme icin
 Bu API icin onerilen frontend yaklasimi `React + Vite + TypeScript`tir. Detayli ekran listesi, klasor yapisi ve gelistirme sirasi icin:
 
 [FRONTEND_PLAN.md](FRONTEND_PLAN.md)
+
+## Frontend Uygulamasi
+
+Repo icinde `BerberApp.UI` klasorunde basit bir React frontend taslagi bulunur.
+
+```bash
+cd BerberApp.UI
+npm install
+npm run dev
+```
+
+Frontend varsayilan olarak API'yi su adresten cagirir:
+
+```text
+http://localhost:5159/api
+```
+
+API tarafinda Vite dev server icin CORS izni bulunur:
+
+```text
+http://localhost:5173
+```

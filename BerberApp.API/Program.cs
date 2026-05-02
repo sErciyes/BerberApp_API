@@ -17,6 +17,7 @@ var jwtIssuer = builder.Configuration["Jwt:Issuer"]
 var jwtAudience = builder.Configuration["Jwt:Audience"]
     ?? throw new InvalidOperationException("Jwt:Audience appsettings.json icinde bulunamadi.");
 
+var corsPolicyName = "BerberAppCors";
 
 builder.Services.AddControllers()
     .ConfigureApiBehaviorOptions(options =>
@@ -33,6 +34,16 @@ builder.Services.AddControllers()
         };
     });
 builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(corsPolicyName, policy =>
+    {
+        policy
+            .WithOrigins("http://localhost:5173", "https://localhost:5173")
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
+});
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("SqlConnection")));
 builder.Services.AddScoped<IBarberService, BarberService>();
@@ -125,6 +136,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseCors(corsPolicyName);
 
 app.UseAuthentication();
 

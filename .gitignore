@@ -1,6 +1,9 @@
 # Build output
 bin/
 obj/
+node_modules/
+dist/
+*.tsbuildinfo
 
 # Visual Studio
 .vs/
