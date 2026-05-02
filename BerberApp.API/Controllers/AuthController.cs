@@ -1,7 +1,6 @@
 using BerberApp.API.Models;
 using BerberApp.Business.Dtos.UserDtos;
 using BerberApp.Business.Services;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BerberApp.API.Controllers
@@ -41,20 +40,6 @@ namespace BerberApp.API.Controllers
             }
 
             return Ok(ApiResponse<object>.Ok(result.Data!, "Giris basarili."));
-        }
-
-        [Authorize]
-        [HttpGet("secret")]
-        public IActionResult Secret()
-        {
-            return Ok(ApiResponse<string>.Ok("Bu korumali alan"));
-        }
-
-        [Authorize(Roles = "Admin")]
-        [HttpGet("admin-secret")]
-        public IActionResult AdminSecret()
-        {
-            return Ok(ApiResponse<string>.Ok("Bu alan sadece admin kullanicilar icindir"));
         }
     }
 }

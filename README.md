@@ -134,8 +134,6 @@ Swagger `Bearer` kismini otomatik ekler.
 
 - `POST /api/auth/register`
 - `POST /api/auth/login`
-- `GET /api/auth/secret`
-- `GET /api/auth/admin-secret`
 
 ### Users
 
@@ -180,6 +178,16 @@ Body:
 ```
 
 Bu endpoint sadece Admin kullanicilar tarafindan cagrilabilir.
+
+Ilk admin kullaniciyi olusturmak icin once normal register endpointi ile bir kullanici kaydedin. Sonra SQL Server uzerinden bu kullanicinin rolunu `Admin` yapin:
+
+```sql
+UPDATE Users
+SET Role = 'Admin'
+WHERE Email = 'admin@example.com';
+```
+
+Bu islemden sonra tekrar login olun. Yeni token icinde `Admin` rolu yer alacaktir.
 
 ## Standart Response Modeli
 
