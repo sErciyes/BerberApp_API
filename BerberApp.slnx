@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="BerberApp.API/BerberApp.API.csproj" />
+  <Project Path="BerberApp.Business/BerberApp.Business.csproj" />
+  <Project Path="BerberApp.DataAccess/BerberApp.DataAccess.csproj" />
+  <Project Path="BerberApp.Entities/BerberApp.Entities.csproj" />
+</Solution>

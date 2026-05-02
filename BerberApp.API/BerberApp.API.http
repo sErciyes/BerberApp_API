@@ -1,0 +1,6 @@
+@BerberApp.API_HostAddress = http://localhost:5159
+
+GET {{BerberApp.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
