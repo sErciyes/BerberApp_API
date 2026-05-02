@@ -7,6 +7,7 @@ namespace BerberApp.Business.Services
     {
         List<UserDto> GetAll();
         UserDto? GetById(int id);
+        ServiceResult<UserDto> UpdateProfile(int id, UpdateProfileDto dto);
         ServiceResult<UserDto> UpdateRole(int id, UpdateUserRoleDto dto);
     }
 }

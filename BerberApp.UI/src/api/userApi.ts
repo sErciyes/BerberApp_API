@@ -12,6 +12,11 @@ export async function getUsers() {
   return response.data;
 }
 
+export async function updateProfile(payload: { fullName: string; email: string }) {
+  const response = await axiosClient.put<ApiResponse<User>>("/users/me", payload);
+  return response.data;
+}
+
 export async function updateUserRole(id: number, role: "User" | "Admin") {
   const response = await axiosClient.patch<ApiResponse<User>>(`/users/${id}/role`, { role });
   return response.data;

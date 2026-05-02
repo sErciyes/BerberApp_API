@@ -28,6 +28,31 @@ namespace BerberApp.Business.Services
             return user == null ? null : MapToDto(user);
         }
 
+        public ServiceResult<UserDto> UpdateProfile(int id, UpdateProfileDto dto)
+        {
+            var user = _context.Users.Find(id);
+
+            if (user == null)
+            {
+                return ServiceResult<UserDto>.Fail("Kullanici bulunamadi.");
+            }
+
+            var email = dto.Email.Trim().ToLower();
+            var emailExists = _context.Users.Any(x => x.Id != id && x.Email == email);
+
+            if (emailExists)
+            {
+                return ServiceResult<UserDto>.Fail("Bu email baska bir kullanici tarafindan kullaniliyor.");
+            }
+
+            user.FullName = dto.FullName.Trim();
+            user.Email = email;
+
+            _context.SaveChanges();
+
+            return ServiceResult<UserDto>.Ok(MapToDto(user));
+        }
+
         public ServiceResult<UserDto> UpdateRole(int id, UpdateUserRoleDto dto)
         {
             var user = _context.Users.Find(id);

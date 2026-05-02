@@ -4,6 +4,7 @@ obj/
 node_modules/
 dist/
 *.tsbuildinfo
+.dotnet-home/
 
 # Visual Studio
 .vs/

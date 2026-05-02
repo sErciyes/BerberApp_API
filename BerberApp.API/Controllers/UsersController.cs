@@ -33,6 +33,25 @@ namespace BerberApp.API.Controllers
             return Ok(ApiResponse<object>.Ok(user));
         }
 
+        [HttpPut("me")]
+        public IActionResult UpdateMe(UpdateProfileDto dto)
+        {
+            var userId = GetCurrentUserId();
+            var result = _userService.UpdateProfile(userId, dto);
+
+            if (!result.Success)
+            {
+                if (result.Error == "Kullanici bulunamadi.")
+                {
+                    return NotFound(ApiResponse<object>.Fail(result.Error));
+                }
+
+                return BadRequest(ApiResponse<object>.Fail(result.Error ?? "Profil guncellenemedi."));
+            }
+
+            return Ok(ApiResponse<object>.Ok(result.Data!, "Profil guncellendi."));
+        }
+
         [Authorize(Roles = "Admin")]
         [HttpGet]
         public IActionResult GetAll()

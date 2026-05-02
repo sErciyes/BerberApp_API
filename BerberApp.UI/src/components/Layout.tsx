@@ -1,11 +1,13 @@
-import { CalendarCheck, LogOut, Scissors, Shield, UserRound } from "lucide-react";
+import { CalendarCheck, LogOut, Moon, Scissors, Shield, Sun, UserRound } from "lucide-react";
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { useTheme } from "../context/ThemeContext";
 import { Button } from "./Button";
 
 export function Layout() {
   const navigate = useNavigate();
   const { auth, isAdmin, signOut } = useAuth();
+  const { theme, toggleTheme } = useTheme();
 
   function handleLogout() {
     signOut();
@@ -65,12 +67,18 @@ export function Layout() {
             <div className="user-chip">
               <span>{auth.fullName}</span>
               <small>{auth.role}</small>
+              <Button variant="ghost" onClick={toggleTheme} title={theme === "dark" ? "Aydinlik mod" : "Karanlik mod"}>
+                {theme === "dark" ? <Sun size={17} /> : <Moon size={17} />}
+              </Button>
               <Button variant="ghost" onClick={handleLogout} title="Cikis yap">
                 <LogOut size={17} />
               </Button>
             </div>
           ) : (
             <div className="auth-links">
+              <Button variant="ghost" onClick={toggleTheme} title={theme === "dark" ? "Aydinlik mod" : "Karanlik mod"}>
+                {theme === "dark" ? <Sun size={17} /> : <Moon size={17} />}
+              </Button>
               <NavLink to="/login">Login</NavLink>
               <NavLink to="/register">Register</NavLink>
             </div>

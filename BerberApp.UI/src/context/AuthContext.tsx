@@ -6,6 +6,7 @@ type AuthContextValue = {
   auth: LoginResponse | null;
   isAdmin: boolean;
   signIn: (auth: LoginResponse) => void;
+  updateAuth: (changes: Partial<LoginResponse>) => void;
   signOut: () => void;
 };
 
@@ -21,6 +22,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       signIn: (nextAuth) => {
         saveAuth(nextAuth);
         setAuth(nextAuth);
+      },
+      updateAuth: (changes) => {
+        setAuth((current) => {
+          if (!current) {
+            return current;
+          }
+
+          const nextAuth = { ...current, ...changes };
+          saveAuth(nextAuth);
+          return nextAuth;
+        });
       },
       signOut: () => {
         clearAuth();
