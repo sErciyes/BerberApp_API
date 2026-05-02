@@ -212,3 +212,44 @@ Hatali response:
 - `appsettings.Development.json` dosyasi `.gitignore` icindedir ve GitHub'a yuklenmemelidir.
 - JWT key ve SQL Server sifresi gibi hassas bilgiler repoya eklenmemelidir.
 - Bu proje bilincli olarak sade tutulmustur. Repository pattern, Unit of Work gibi yapilar ileride eklenebilir; ancak mevcut hali junior seviyede daha kolay okunur ve anlatilir durumdadir.
+
+## Docker ile Calistirma
+
+Projede API ve SQL Server icin basit bir Docker Compose yapisi bulunur.
+
+```bash
+docker compose up -d
+```
+
+Bu komut iki container baslatir:
+
+- `berberapp-api`
+- `berberapp-sqlserver`
+
+API adresi:
+
+```text
+http://localhost:5159/swagger
+```
+
+Ilk calistirmada SQL Server container'inin tamamen hazir hale gelmesi biraz zaman alabilir. Veritabani semasini olusturmak icin migration uygulanmalidir.
+
+Docker SQL Server'a migration uygulamak icin:
+
+```bash
+dotnet ef database update --project BerberApp.DataAccess --startup-project BerberApp.API --connection "Server=localhost,1433;Database=BerberAppDb;User Id=sa;Password=Your_strong_password123!;TrustServerCertificate=True;"
+```
+
+Containerlari durdurmak icin:
+
+```bash
+docker compose down
+```
+
+Veritabani volume'unu da silmek isterseniz:
+
+```bash
+docker compose down -v
+```
+
+Not: `docker-compose.yml` icindeki sifre ve JWT key sadece lokal gelistirme icindir. Gercek ortamda secret/environment variable yonetimi kullanilmalidir.

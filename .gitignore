@@ -16,6 +16,7 @@ obj/
 # Local configuration and secrets
 appsettings.Development.json
 appsettings.Local.json
+.env
 *.db
 *.sqlite
 

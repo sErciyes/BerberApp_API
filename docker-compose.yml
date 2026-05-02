@@ -1,0 +1,31 @@
+services:
+  berberapp-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: berberapp-api
+    ports:
+      - "5159:8080"
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_URLS: http://+:8080
+      ConnectionStrings__SqlConnection: Server=berberapp-sqlserver,1433;Database=BerberAppDb;User Id=sa;Password=Your_strong_password123!;TrustServerCertificate=True;
+      Jwt__Key: DockerDevelopmentSecretKey_ChangeThis_123456789
+      Jwt__Issuer: berberapi
+      Jwt__Audience: berberapi
+    depends_on:
+      - berberapp-sqlserver
+
+  berberapp-sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: berberapp-sqlserver
+    ports:
+      - "1433:1433"
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: Your_strong_password123!
+    volumes:
+      - berberapp-sqlserver-data:/var/opt/mssql
+
+volumes:
+  berberapp-sqlserver-data:
