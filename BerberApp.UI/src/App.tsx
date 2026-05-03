@@ -8,6 +8,7 @@ import { AdminDashboardPage } from "./pages/AdminDashboardPage";
 import { AdminUsersPage } from "./pages/AdminUsersPage";
 import { BarbersPage } from "./pages/BarbersPage";
 import { CreateAppointmentPage } from "./pages/CreateAppointmentPage";
+import { ForgotPasswordPage } from "./pages/ForgotPasswordPage";
 import { LoginPage } from "./pages/LoginPage";
 import { MyAppointmentsPage } from "./pages/MyAppointmentsPage";
 import { ProfilePage } from "./pages/ProfilePage";
@@ -20,6 +21,7 @@ export function App() {
         <Route index element={<Navigate to="/barbers" replace />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
+        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
         <Route path="/barbers" element={<BarbersPage />} />
 
         <Route element={<ProtectedRoute />}>

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { CalendarClock, LockKeyhole, Scissors } from "lucide-react";
-import { register, verifyEmail } from "../api/authApi";
+import { register, resendEmailVerification, verifyEmail } from "../api/authApi";
 import { getErrorMessage } from "../api/axiosClient";
 import { Button } from "../components/Button";
 import { FormField } from "../components/FormField";
@@ -42,6 +42,22 @@ export function RegisterPage() {
     try {
       const response = await verifyEmail({ email, token: verificationToken });
       setSuccess(response.data?.message ?? response.message ?? "Email dogrulandi. Giris yapabilirsin.");
+    } catch (err) {
+      setError(getErrorMessage(err));
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function handleResend() {
+    setLoading(true);
+    setError("");
+    setSuccess("");
+
+    try {
+      const response = await resendEmailVerification({ email });
+      setSuccess(response.data?.message ?? response.message ?? "Dogrulama maili tekrar gonderildi.");
+      setVerificationToken(response.data?.developmentToken ?? "");
     } catch (err) {
       setError(getErrorMessage(err));
     } finally {
@@ -114,6 +130,9 @@ export function RegisterPage() {
           <FormField label="Email dogrulama tokeni" value={verificationToken} onChange={(e) => setVerificationToken(e.target.value)} required />
           <Button type="submit" variant="secondary" disabled={loading || !email}>
             Email dogrula
+          </Button>
+          <Button type="button" variant="ghost" disabled={loading || !email} onClick={handleResend}>
+            Dogrulama Mailini Tekrar Gonder
           </Button>
           <p className="form-note">
             Hesabin var mi? <Link to="/login">Giris yap</Link>

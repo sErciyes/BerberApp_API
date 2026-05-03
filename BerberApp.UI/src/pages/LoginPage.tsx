@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { CalendarCheck, ShieldCheck, Sparkles } from "lucide-react";
 import { login } from "../api/authApi";
 import { getErrorMessage } from "../api/axiosClient";
@@ -86,6 +86,10 @@ export function LoginPage() {
           <Button type="submit" disabled={loading}>
             {loading ? "Giris yapiliyor" : "Giris yap"}
           </Button>
+          <p className="form-note auth-link-row">
+            <Link to="/forgot-password">Sifremi unuttum</Link>
+            <Link to="/register">Kayit ol</Link>
+          </p>
         </form>
       </section>
     </div>

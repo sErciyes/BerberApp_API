@@ -576,6 +576,12 @@ select option {
   font-weight: 800;
 }
 
+.auth-link-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+}
+
 .admin-tile {
   align-items: flex-start;
   justify-content: flex-start;

@@ -17,6 +17,11 @@ export async function verifyEmail(payload: { email: string; token: string }) {
   return response.data;
 }
 
+export async function resendEmailVerification(payload: { email: string }) {
+  const response = await axiosClient.post<ApiResponse<AuthActionResponse>>("/auth/resend-email-verification", payload);
+  return response.data;
+}
+
 export async function forgotPassword(payload: { email: string }) {
   const response = await axiosClient.post<ApiResponse<AuthActionResponse>>("/auth/forgot-password", payload);
   return response.data;
