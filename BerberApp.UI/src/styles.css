@@ -285,6 +285,11 @@ select {
   align-items: start;
 }
 
+.profile-stack {
+  display: grid;
+  gap: 16px;
+}
+
 .form-panel,
 .inline-form {
   display: grid;
@@ -552,6 +557,12 @@ select option {
   gap: 15px;
 }
 
+.auth-followup {
+  margin-top: 18px;
+  padding-top: 18px;
+  border-top: 1px solid var(--border);
+}
+
 .auth-form .btn-primary {
   min-height: 46px;
 }
@@ -663,6 +674,28 @@ tbody tr:hover {
   gap: 16px;
   padding: 14px;
   background: var(--surface);
+}
+
+.token-box {
+  display: grid;
+  gap: 6px;
+  padding: 12px;
+  border: 1px solid var(--accent-border);
+  border-radius: 8px;
+  background: var(--accent-soft);
+}
+
+.token-box span {
+  color: var(--muted-strong);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.token-box strong {
+  overflow-wrap: anywhere;
+  color: var(--text);
+  font-family: ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", monospace;
+  font-size: 13px;
 }
 
 @media (max-width: 920px) {

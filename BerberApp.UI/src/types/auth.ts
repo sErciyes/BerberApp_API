@@ -15,4 +15,10 @@ export type LoginResponse = {
   fullName: string;
   email: string;
   role: "User" | "Admin";
+  emailConfirmed: boolean;
+};
+
+export type AuthActionResponse = {
+  message: string;
+  developmentToken: string | null;
 };

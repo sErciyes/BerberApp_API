@@ -37,6 +37,21 @@ namespace BerberApp.DataAccess.Context
                 entity.Property(x => x.Role).
                 HasMaxLength(20).
                 IsRequired();
+
+                entity.Property(x => x.EmailConfirmed)
+                .HasDefaultValue(false);
+
+                entity.Property(x => x.EmailVerificationTokenHash)
+                .HasMaxLength(500);
+
+                entity.Property(x => x.PasswordResetTokenHash)
+                .HasMaxLength(500);
+
+                entity.Property(x => x.PendingPasswordHash)
+                .HasMaxLength(500);
+
+                entity.Property(x => x.PasswordChangeTokenHash)
+                .HasMaxLength(500);
             });
 
             modelBuilder.Entity<Barber>(entity => 

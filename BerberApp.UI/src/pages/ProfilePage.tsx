@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { confirmPasswordChange, requestPasswordChange } from "../api/authApi";
 import { getErrorMessage } from "../api/axiosClient";
 import { getMe, updateProfile } from "../api/userApi";
 import { Button } from "../components/Button";
@@ -12,9 +13,14 @@ export function ProfilePage() {
   const [user, setUser] = useState<User | null>(null);
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [passwordChangeToken, setPasswordChangeToken] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [passwordMessage, setPasswordMessage] = useState("");
   const [isSaving, setIsSaving] = useState(false);
+  const [isPasswordSaving, setIsPasswordSaving] = useState(false);
 
   useEffect(() => {
     getMe()
@@ -61,6 +67,42 @@ export function ProfilePage() {
     }
   }
 
+  async function handlePasswordChangeRequest(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setError("");
+    setPasswordMessage("");
+    setIsPasswordSaving(true);
+
+    try {
+      const response = await requestPasswordChange({ currentPassword, newPassword });
+      setPasswordMessage(response.data?.message ?? response.message ?? "Onay maili gonderildi.");
+      setPasswordChangeToken(response.data?.developmentToken ?? "");
+    } catch (err) {
+      setError(getErrorMessage(err));
+    } finally {
+      setIsPasswordSaving(false);
+    }
+  }
+
+  async function handlePasswordChangeConfirm(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setError("");
+    setPasswordMessage("");
+    setIsPasswordSaving(true);
+
+    try {
+      const response = await confirmPasswordChange({ token: passwordChangeToken });
+      setPasswordMessage(response.data?.message ?? response.message ?? "Sifre guncellendi.");
+      setCurrentPassword("");
+      setNewPassword("");
+      setPasswordChangeToken("");
+    } catch (err) {
+      setError(getErrorMessage(err));
+    } finally {
+      setIsPasswordSaving(false);
+    }
+  }
+
   return (
     <div>
       <div className="page-heading">
@@ -70,6 +112,7 @@ export function ProfilePage() {
 
       {error && <Notice type="error">{error}</Notice>}
       {success && <Notice type="success">{success}</Notice>}
+      {passwordMessage && <Notice type="success">{passwordMessage}</Notice>}
       {user && (
         <div className="profile-grid">
           <form className="form-panel" onSubmit={handleSubmit}>
@@ -95,10 +138,53 @@ export function ProfilePage() {
             </Button>
           </form>
 
-          <div className="detail-list">
-            <div><span>Ad Soyad</span><strong>{user.fullName}</strong></div>
-            <div><span>Email</span><strong>{user.email}</strong></div>
-            <div><span>Rol</span><strong>{user.role}</strong></div>
+          <div className="profile-stack">
+            <div className="detail-list">
+              <div><span>Ad Soyad</span><strong>{user.fullName}</strong></div>
+              <div><span>Email</span><strong>{user.email}</strong></div>
+              <div><span>Rol</span><strong>{user.role}</strong></div>
+            </div>
+
+            <form className="form-panel" onSubmit={handlePasswordChangeRequest}>
+              <FormField
+                label="Mevcut Sifre"
+                type="password"
+                value={currentPassword}
+                onChange={(event) => setCurrentPassword(event.target.value)}
+                required
+              />
+              <FormField
+                label="Yeni Sifre"
+                type="password"
+                value={newPassword}
+                minLength={6}
+                onChange={(event) => setNewPassword(event.target.value)}
+                required
+              />
+              <Button type="submit" variant="secondary" disabled={isPasswordSaving}>
+                Mail Onayi Iste
+              </Button>
+            </form>
+
+            {(passwordChangeToken || currentPassword || newPassword) && (
+              <form className="form-panel" onSubmit={handlePasswordChangeConfirm}>
+                {passwordChangeToken && (
+                  <div className="token-box">
+                    <span>Development sifre onay tokeni</span>
+                    <strong>{passwordChangeToken}</strong>
+                  </div>
+                )}
+                <FormField
+                  label="Mail Onay Tokeni"
+                  value={passwordChangeToken}
+                  onChange={(event) => setPasswordChangeToken(event.target.value)}
+                  required
+                />
+                <Button type="submit" disabled={isPasswordSaving || !passwordChangeToken}>
+                  Sifre Degisikligini Onayla
+                </Button>
+              </form>
+            )}
           </div>
         </div>
       )}

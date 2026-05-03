@@ -35,6 +35,8 @@ API -> Business -> DataAccess -> Entities
 ## Temel Ozellikler
 
 - Kullanici kayit ve giris islemleri
+- Email dogrulama akisi
+- Mail onayli sifre sifirlama ve sifre degistirme
 - BCrypt ile sifre hashleme
 - JWT token uretimi
 - Admin/User rol ayrimi
@@ -74,6 +76,9 @@ Ornek:
     "Key": "CHANGE_ME_TO_A_LONG_SECRET_KEY_AT_LEAST_32_CHARS",
     "Issuer": "berberapi",
     "Audience": "berberapi"
+  },
+  "Email": {
+    "ShowDevelopmentTokens": true
   }
 }
 ```
@@ -122,7 +127,8 @@ Swagger `Bearer` kismini otomatik ekler.
     "userId": 1,
     "fullName": "Serdar Test",
     "email": "serdar@example.com",
-    "role": "User"
+    "role": "User",
+    "emailConfirmed": true
   },
   "errors": null
 }
@@ -134,6 +140,12 @@ Swagger `Bearer` kismini otomatik ekler.
 
 - `POST /api/auth/register`
 - `POST /api/auth/login`
+- `POST /api/auth/verify-email`
+- `POST /api/auth/resend-email-verification`
+- `POST /api/auth/forgot-password`
+- `POST /api/auth/reset-password`
+- `POST /api/auth/request-password-change` - Authenticated
+- `POST /api/auth/confirm-password-change` - Authenticated
 
 ### Users
 

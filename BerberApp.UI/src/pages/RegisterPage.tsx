@@ -1,28 +1,47 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { CalendarClock, LockKeyhole, Scissors } from "lucide-react";
-import { register } from "../api/authApi";
+import { register, verifyEmail } from "../api/authApi";
 import { getErrorMessage } from "../api/axiosClient";
 import { Button } from "../components/Button";
 import { FormField } from "../components/FormField";
 import { Notice } from "../components/Notice";
 
 export function RegisterPage() {
-  const navigate = useNavigate();
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [verificationToken, setVerificationToken] = useState("");
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
 
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
     setLoading(true);
     setError("");
+    setSuccess("");
 
     try {
-      await register({ fullName, email, password });
-      navigate("/login");
+      const response = await register({ fullName, email, password });
+      setSuccess(response.data?.message ?? response.message ?? "Kayit basarili. Email dogrulama gerekli.");
+      setVerificationToken(response.data?.developmentToken ?? "");
+    } catch (err) {
+      setError(getErrorMessage(err));
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function handleVerify(event: React.FormEvent) {
+    event.preventDefault();
+    setLoading(true);
+    setError("");
+    setSuccess("");
+
+    try {
+      const response = await verifyEmail({ email, token: verificationToken });
+      setSuccess(response.data?.message ?? response.message ?? "Email dogrulandi. Giris yapabilirsin.");
     } catch (err) {
       setError(getErrorMessage(err));
     } finally {
@@ -76,11 +95,25 @@ export function RegisterPage() {
 
         <form className="auth-form" onSubmit={handleSubmit}>
           {error && <Notice type="error">{error}</Notice>}
+          {success && <Notice type="success">{success}</Notice>}
           <FormField label="Ad Soyad" value={fullName} onChange={(e) => setFullName(e.target.value)} required />
           <FormField label="Email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
           <FormField label="Sifre" type="password" value={password} onChange={(e) => setPassword(e.target.value)} minLength={6} required />
           <Button type="submit" disabled={loading}>
             {loading ? "Kayit yapiliyor" : "Kayit ol"}
+          </Button>
+          {verificationToken && (
+            <div className="token-box">
+              <span>Development dogrulama tokeni</span>
+              <strong>{verificationToken}</strong>
+            </div>
+          )}
+        </form>
+
+        <form className="auth-form auth-followup" onSubmit={handleVerify}>
+          <FormField label="Email dogrulama tokeni" value={verificationToken} onChange={(e) => setVerificationToken(e.target.value)} required />
+          <Button type="submit" variant="secondary" disabled={loading || !email}>
+            Email dogrula
           </Button>
           <p className="form-note">
             Hesabin var mi? <Link to="/login">Giris yap</Link>
