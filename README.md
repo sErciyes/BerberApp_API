@@ -78,7 +78,17 @@ Ornek:
     "Audience": "berberapi"
   },
   "Email": {
-    "ShowDevelopmentTokens": true
+    "UseSmtp": false,
+    "ShowDevelopmentTokens": true,
+    "Smtp": {
+      "Host": "smtp.gmail.com",
+      "Port": 587,
+      "EnableSsl": true,
+      "UserName": "YOUR_EMAIL@gmail.com",
+      "Password": "YOUR_APP_PASSWORD",
+      "FromEmail": "YOUR_EMAIL@gmail.com",
+      "FromName": "BerberApp"
+    }
   }
 }
 ```
@@ -146,6 +156,30 @@ Swagger `Bearer` kismini otomatik ekler.
 - `POST /api/auth/reset-password`
 - `POST /api/auth/request-password-change` - Authenticated
 - `POST /api/auth/confirm-password-change` - Authenticated
+
+## Email Gonderimi
+
+Development ortaminda `Email:UseSmtp` false ise mail icerigi console'a yazilir ve test kolayligi icin token response icindeki `developmentToken` alaninda doner.
+
+Gercek mail gonderimi icin `appsettings.Development.json` veya environment variable uzerinden SMTP bilgilerini girin:
+
+```json
+"Email": {
+  "UseSmtp": true,
+  "ShowDevelopmentTokens": false,
+  "Smtp": {
+    "Host": "smtp.gmail.com",
+    "Port": 587,
+    "EnableSsl": true,
+    "UserName": "yourmail@gmail.com",
+    "Password": "gmail-app-password",
+    "FromEmail": "yourmail@gmail.com",
+    "FromName": "BerberApp"
+  }
+}
+```
+
+Gmail kullanirken normal hesap sifresi degil, Google hesabindan olusturulan `App Password` kullanilmalidir.
 
 ### Users
 
