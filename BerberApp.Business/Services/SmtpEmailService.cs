@@ -13,7 +13,7 @@ namespace BerberApp.Business.Services
             _configuration = configuration;
         }
 
-        public void SendEmail(string to, string subject, string body)
+        public void SendEmail(string to, string subject, string body, bool isHtml = false)
         {
             var host = GetRequiredSetting("Email:Smtp:Host");
             var username = GetRequiredSetting("Email:Smtp:UserName");
@@ -30,7 +30,7 @@ namespace BerberApp.Business.Services
                 From = new MailAddress(fromEmail, fromName),
                 Subject = subject,
                 Body = body,
-                IsBodyHtml = false
+                IsBodyHtml = isHtml
             };
 
             message.To.Add(to);

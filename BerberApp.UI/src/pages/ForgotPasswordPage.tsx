@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { KeyRound, MailCheck, ShieldCheck } from "lucide-react";
 import { forgotPassword, resetPassword } from "../api/authApi";
 import { getErrorMessage } from "../api/axiosClient";
@@ -8,8 +8,9 @@ import { FormField } from "../components/FormField";
 import { Notice } from "../components/Notice";
 
 export function ForgotPasswordPage() {
-  const [email, setEmail] = useState("");
-  const [token, setToken] = useState("");
+  const [searchParams] = useSearchParams();
+  const [email, setEmail] = useState(() => searchParams.get("email") ?? "");
+  const [token, setToken] = useState(() => searchParams.get("token") ?? "");
   const [newPassword, setNewPassword] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");

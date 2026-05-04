@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { confirmPasswordChange, requestPasswordChange } from "../api/authApi";
 import { getErrorMessage } from "../api/axiosClient";
 import { getMe, updateProfile } from "../api/userApi";
@@ -10,12 +11,13 @@ import type { User } from "../types/user";
 
 export function ProfilePage() {
   const { updateAuth } = useAuth();
+  const [searchParams] = useSearchParams();
   const [user, setUser] = useState<User | null>(null);
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
-  const [passwordChangeToken, setPasswordChangeToken] = useState("");
+  const [passwordChangeToken, setPasswordChangeToken] = useState(() => searchParams.get("passwordChangeToken") ?? "");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [passwordMessage, setPasswordMessage] = useState("");
@@ -23,6 +25,13 @@ export function ProfilePage() {
   const [isPasswordSaving, setIsPasswordSaving] = useState(false);
 
   useEffect(() => {
+    const tokenFromUrl = searchParams.get("passwordChangeToken");
+
+    if (tokenFromUrl) {
+      setPasswordChangeToken(tokenFromUrl);
+      setPasswordMessage("Mail linkindeki onay tokeni forma yerlestirildi. Sifre degisikligini tamamlamak icin onayla.");
+    }
+
     getMe()
       .then((response) => {
         if (!response.data) {
@@ -170,7 +179,7 @@ export function ProfilePage() {
               <form className="form-panel" onSubmit={handlePasswordChangeConfirm}>
                 {passwordChangeToken && (
                   <div className="token-box">
-                    <span>Development sifre onay tokeni</span>
+                    <span>Mail linkinden gelen onay tokeni</span>
                     <strong>{passwordChangeToken}</strong>
                   </div>
                 )}

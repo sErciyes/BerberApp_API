@@ -13,6 +13,7 @@ import { LoginPage } from "./pages/LoginPage";
 import { MyAppointmentsPage } from "./pages/MyAppointmentsPage";
 import { ProfilePage } from "./pages/ProfilePage";
 import { RegisterPage } from "./pages/RegisterPage";
+import { VerifyEmailPage } from "./pages/VerifyEmailPage";
 
 export function App() {
   return (
@@ -21,6 +22,7 @@ export function App() {
         <Route index element={<Navigate to="/barbers" replace />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
+        <Route path="/verify-email" element={<VerifyEmailPage />} />
         <Route path="/forgot-password" element={<ForgotPasswordPage />} />
         <Route path="/barbers" element={<BarbersPage />} />
 

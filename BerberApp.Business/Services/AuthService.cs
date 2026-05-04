@@ -1,4 +1,5 @@
 using System.IdentityModel.Tokens.Jwt;
+using System.Net;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
@@ -169,7 +170,13 @@ namespace BerberApp.Business.Services
             _emailService.SendEmail(
                 user.Email,
                 "BerberApp sifre sifirlama",
-                $"Sifre sifirlama tokenin: {token}\nBu token 30 dakika gecerlidir.");
+                CreateEmailHtml(
+                    "Sifreni yenile",
+                    "BerberApp hesabinin sifresini yenilemek icin asagidaki butona tikla.",
+                    "Sifreyi Yenile",
+                    CreateFrontendLink("/forgot-password", user.Email, token),
+                    "Bu link 30 dakika gecerlidir."),
+                isHtml: true);
 
             return ServiceResult<AuthActionResponseDto>.Ok(CreateActionResponse("Sifre sifirlama maili gonderildi.", token));
         }
@@ -223,7 +230,13 @@ namespace BerberApp.Business.Services
             _emailService.SendEmail(
                 user.Email,
                 "BerberApp sifre degisikligi onayi",
-                $"Sifre degisikligini onaylama tokenin: {token}\nBu token 30 dakika gecerlidir.");
+                CreateEmailHtml(
+                    "Sifre degisikligini onayla",
+                    "BerberApp hesabinda sifre degisikligi baslatildi. Onaylamak icin asagidaki butona tikla.",
+                    "Degisikligi Onayla",
+                    CreateFrontendLink("/profile", user.Email, token, "passwordChangeToken"),
+                    "Bu link 30 dakika gecerlidir."),
+                isHtml: true);
 
             return ServiceResult<AuthActionResponseDto>.Ok(CreateActionResponse("Sifre degisikligi icin onay maili gonderildi.", token));
         }
@@ -305,7 +318,65 @@ namespace BerberApp.Business.Services
             _emailService.SendEmail(
                 email,
                 "BerberApp email dogrulama",
-                $"Email dogrulama tokenin: {token}\nBu token 24 saat gecerlidir.");
+                CreateEmailHtml(
+                    "Email adresini dogrula",
+                    "BerberApp hesabini kullanmaya baslamak icin email adresini dogrula.",
+                    "Emaili Dogrula",
+                    CreateFrontendLink("/verify-email", email, token),
+                    "Bu link 24 saat gecerlidir."),
+                isHtml: true);
+        }
+
+        private string CreateFrontendLink(string path, string email, string token, string tokenParameterName = "token")
+        {
+            var frontendBaseUrl = (_configuration["Frontend:BaseUrl"] ?? "http://localhost:5173").TrimEnd('/');
+            var encodedEmail = WebUtility.UrlEncode(email);
+            var encodedToken = WebUtility.UrlEncode(token);
+
+            return $"{frontendBaseUrl}{path}?email={encodedEmail}&{tokenParameterName}={encodedToken}";
+        }
+
+        private static string CreateEmailHtml(string title, string description, string buttonText, string actionUrl, string footerText)
+        {
+            return $"""
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{WebUtility.HtmlEncode(title)}</title>
+</head>
+<body style="margin:0;background:#f5f7fb;font-family:Arial,Helvetica,sans-serif;color:#132033;">
+  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:#f5f7fb;padding:32px 12px;">
+    <tr>
+      <td align="center">
+        <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width:560px;background:#ffffff;border:1px solid #d7deea;border-radius:12px;overflow:hidden;">
+          <tr>
+            <td style="background:#0b1220;padding:22px 26px;color:#f8fafc;">
+              <div style="font-size:13px;color:#38bdf8;font-weight:700;letter-spacing:.4px;">BerberApp</div>
+              <h1 style="margin:8px 0 0;font-size:24px;line-height:1.25;">{WebUtility.HtmlEncode(title)}</h1>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:26px;">
+              <p style="margin:0 0 22px;font-size:15px;line-height:1.7;color:#334155;">{WebUtility.HtmlEncode(description)}</p>
+              <a href="{WebUtility.HtmlEncode(actionUrl)}" style="display:inline-block;background:#0ea5e9;color:#ffffff;text-decoration:none;font-weight:800;padding:13px 18px;border-radius:8px;">{WebUtility.HtmlEncode(buttonText)}</a>
+              <p style="margin:22px 0 0;font-size:13px;line-height:1.6;color:#64748b;">Buton calismazsa bu linki tarayicinda acabilirsin:</p>
+              <p style="margin:8px 0 0;font-size:12px;line-height:1.5;word-break:break-all;color:#0f172a;">{WebUtility.HtmlEncode(actionUrl)}</p>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:16px 26px;background:#f8fafc;border-top:1px solid #d7deea;color:#64748b;font-size:12px;line-height:1.6;">
+              {WebUtility.HtmlEncode(footerText)} Bu istegi sen yapmadiysan bu maili yok sayabilirsin.
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
+""";
         }
 
         private AuthActionResponseDto CreateActionResponse(string message, string? developmentToken = null)
