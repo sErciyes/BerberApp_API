@@ -17,6 +17,7 @@ export function MessagesPage() {
   const [content, setContent] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
+  const [hubReady, setHubReady] = useState(false);
   const connectionRef = useRef<HubConnection | null>(null);
 
   const title = isAdmin ? "Admin Mesajlari" : "Mesajlar";
@@ -51,31 +52,39 @@ export function MessagesPage() {
       .catch((err) => setError(getErrorMessage(err)));
   }, [selectedConversation]);
 
+  function addMessage(message: ChatMessage) {
+    setMessages((current) => {
+      if (current.some((item) => item.id === message.id)) {
+        return current;
+      }
+
+      return [...current, message];
+    });
+
+    setConversations((current) =>
+      current.map((conversation) =>
+        conversation.id === message.conversationId
+          ? { ...conversation, lastMessage: message.content, lastMessageAt: message.createdAt }
+          : conversation
+      )
+    );
+  }
+
   useEffect(() => {
     const connection = createChatConnection();
     connectionRef.current = connection;
 
     connection.on("ReceiveMessage", (message: ChatMessage) => {
-      setMessages((current) => {
-        if (current.some((item) => item.id === message.id)) {
-          return current;
-        }
-
-        return [...current, message];
-      });
-
-      setConversations((current) =>
-        current.map((conversation) =>
-          conversation.id === message.conversationId
-            ? { ...conversation, lastMessage: message.content, lastMessageAt: message.createdAt }
-            : conversation
-        )
-      );
+      addMessage(message);
     });
 
-    connection.start().catch(() => setError("SignalR baglantisi kurulamadi."));
+    connection
+      .start()
+      .then(() => setHubReady(true))
+      .catch(() => setError("SignalR baglantisi kurulamadi."));
 
     return () => {
+      setHubReady(false);
       connection.stop();
     };
   }, []);
@@ -83,18 +92,15 @@ export function MessagesPage() {
   useEffect(() => {
     const connection = connectionRef.current;
 
-    if (!selectedConversation || !connection) {
+    if (!selectedConversation || !connection || !hubReady) {
       return;
     }
 
     const join = () => connection.invoke("JoinConversation", selectedConversation.id).catch(() => setError("Konusma odasina baglanilamadi."));
 
-    if (connection.state === "Connected") {
-      join();
-    } else {
-      connection.onreconnected(join);
-    }
-  }, [selectedConversation]);
+    join();
+    connection.onreconnected(join);
+  }, [selectedConversation, hubReady]);
 
   async function handleSend(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -104,7 +110,12 @@ export function MessagesPage() {
     }
 
     try {
-      await connectionRef.current?.invoke("SendMessage", selectedConversation.id, content.trim());
+      const sentMessage = await connectionRef.current?.invoke<ChatMessage>("SendMessage", selectedConversation.id, content.trim());
+
+      if (sentMessage) {
+        addMessage(sentMessage);
+      }
+
       setContent("");
     } catch {
       setError("Mesaj gonderilemedi.");

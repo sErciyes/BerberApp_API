@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using BerberApp.Business.Dtos.ChatDtos;
 using BerberApp.Business.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
@@ -28,7 +29,7 @@ namespace BerberApp.API.Hubs
             await Groups.AddToGroupAsync(Context.ConnectionId, GetGroupName(conversationId));
         }
 
-        public async Task SendMessage(int conversationId, string content)
+        public async Task<MessageDto> SendMessage(int conversationId, string content)
         {
             var userId = GetCurrentUserId();
             var isAdmin = IsAdmin();
@@ -40,6 +41,7 @@ namespace BerberApp.API.Hubs
             }
 
             await Clients.Group(GetGroupName(conversationId)).SendAsync("ReceiveMessage", result.Data);
+            return result.Data!;
         }
 
         private int GetCurrentUserId()
