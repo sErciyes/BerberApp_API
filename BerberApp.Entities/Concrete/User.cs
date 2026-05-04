@@ -29,5 +29,11 @@ namespace BerberApp.Entities.Concrete
 
         [JsonIgnore]
         public List <Appointment> Appointments { get; set; } = new ();
+
+        [JsonIgnore]
+        public List<Conversation> Conversations { get; set; } = new();
+
+        [JsonIgnore]
+        public List<ChatMessage> SentMessages { get; set; } = new();
     }
 }

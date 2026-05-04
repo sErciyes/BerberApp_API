@@ -10,6 +10,7 @@ import { BarbersPage } from "./pages/BarbersPage";
 import { CreateAppointmentPage } from "./pages/CreateAppointmentPage";
 import { ForgotPasswordPage } from "./pages/ForgotPasswordPage";
 import { LoginPage } from "./pages/LoginPage";
+import { MessagesPage } from "./pages/MessagesPage";
 import { MyAppointmentsPage } from "./pages/MyAppointmentsPage";
 import { ProfilePage } from "./pages/ProfilePage";
 import { RegisterPage } from "./pages/RegisterPage";
@@ -29,6 +30,7 @@ export function App() {
         <Route element={<ProtectedRoute />}>
           <Route path="/appointments/my" element={<MyAppointmentsPage />} />
           <Route path="/appointments/new" element={<CreateAppointmentPage />} />
+          <Route path="/messages" element={<MessagesPage />} />
           <Route path="/profile" element={<ProfilePage />} />
         </Route>
 
@@ -37,6 +39,7 @@ export function App() {
           <Route path="/admin/barbers" element={<AdminBarbersPage />} />
           <Route path="/admin/users" element={<AdminUsersPage />} />
           <Route path="/admin/appointments" element={<AdminAppointmentsPage />} />
+          <Route path="/admin/messages" element={<MessagesPage />} />
         </Route>
       </Route>
     </Routes>

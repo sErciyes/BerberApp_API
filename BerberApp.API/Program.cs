@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using BerberApp.API.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -41,9 +42,11 @@ builder.Services.AddCors(options =>
         policy
             .WithOrigins("http://localhost:5173", "https://localhost:5173")
             .AllowAnyHeader()
-            .AllowAnyMethod();
+            .AllowAnyMethod()
+            .AllowCredentials();
     });
 });
+builder.Services.AddSignalR();
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("SqlConnection")));
 builder.Services.AddScoped<IBarberService, BarberService>();
@@ -59,6 +62,7 @@ else
 }
 builder.Services.AddScoped<IAppointmentService, AppointmentService>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IChatService, ChatService>();
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -75,6 +79,14 @@ builder.Services.AddAuthentication(options =>
         OnMessageReceived = context =>
         {
             var authorizationHeader = context.Request.Headers.Authorization.ToString();
+            var accessToken = context.Request.Query["access_token"].ToString();
+            var path = context.HttpContext.Request.Path;
+
+            if (!string.IsNullOrWhiteSpace(accessToken) && path.StartsWithSegments("/hubs/chat"))
+            {
+                context.Token = accessToken;
+                return Task.CompletedTask;
+            }
 
             if (authorizationHeader.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase))
             {
@@ -156,5 +168,6 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+app.MapHub<ChatHub>("/hubs/chat");
 
 app.Run();

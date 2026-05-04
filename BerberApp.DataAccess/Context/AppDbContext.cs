@@ -16,6 +16,8 @@ namespace BerberApp.DataAccess.Context
         public DbSet<User> Users => Set<User>();
         public DbSet<Barber> Barbers => Set<Barber>();
         public DbSet<Appointment> Appointments => Set<Appointment>();
+        public DbSet<Conversation> Conversations => Set<Conversation>();
+        public DbSet<ChatMessage> ChatMessages => Set<ChatMessage>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -84,6 +86,36 @@ namespace BerberApp.DataAccess.Context
                 entity.HasOne(x => x.Barber)
                 .WithMany(x => x.Appointments)
                 .HasForeignKey(x => x.BerberId)
+                .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            modelBuilder.Entity<Conversation>(entity =>
+            {
+                entity.HasOne(x => x.User)
+                .WithMany(x => x.Conversations)
+                .HasForeignKey(x => x.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(x => x.Barber)
+                .WithMany(x => x.Conversations)
+                .HasForeignKey(x => x.BarberId)
+                .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            modelBuilder.Entity<ChatMessage>(entity =>
+            {
+                entity.Property(x => x.Content)
+                .HasMaxLength(1000)
+                .IsRequired();
+
+                entity.HasOne(x => x.Conversation)
+                .WithMany(x => x.Messages)
+                .HasForeignKey(x => x.ConversationId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasOne(x => x.SenderUser)
+                .WithMany(x => x.SentMessages)
+                .HasForeignKey(x => x.SenderUserId)
                 .OnDelete(DeleteBehavior.Restrict);
             });
         }

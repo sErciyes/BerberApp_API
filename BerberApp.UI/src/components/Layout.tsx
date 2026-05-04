@@ -1,4 +1,4 @@
-import { CalendarCheck, LogOut, Moon, Scissors, Shield, Sun, UserRound } from "lucide-react";
+import { CalendarCheck, LogOut, MessageCircle, Moon, Scissors, Shield, Sun, UserRound } from "lucide-react";
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { useTheme } from "../context/ThemeContext";
@@ -36,6 +36,10 @@ export function Layout() {
                 <CalendarCheck size={18} />
                 Randevularim
               </NavLink>
+              <NavLink to="/messages">
+                <MessageCircle size={18} />
+                Mesajlar
+              </NavLink>
               <NavLink to="/profile">
                 <UserRound size={18} />
                 Profil
@@ -43,10 +47,16 @@ export function Layout() {
             </>
           )}
           {isAdmin && (
-            <NavLink to="/admin">
-              <Shield size={18} />
-              Admin
-            </NavLink>
+            <>
+              <NavLink to="/admin">
+                <Shield size={18} />
+                Admin
+              </NavLink>
+              <NavLink to="/admin/messages">
+                <MessageCircle size={18} />
+                Admin Mesaj
+              </NavLink>
+            </>
           )}
         </nav>
 
