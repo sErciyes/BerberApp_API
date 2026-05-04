@@ -20,5 +20,11 @@ namespace BerberApp.Business.Dtos.UserDtos
         [Required(ErrorMessage = "Sifre zorunludur.")]
         [MinLength(6, ErrorMessage = "Sifre en az 6 karakter olmalidir.")]
         public string Password { get; set; } = "";
+
+        [MaxLength(20, ErrorMessage = "Hesap tipi en fazla 20 karakter olabilir.")]
+        public string AccountType { get; set; } = "User";
+
+        [MaxLength(100, ErrorMessage = "Uzmanlik en fazla 100 karakter olabilir.")]
+        public string Specialty { get; set; } = "";
     }
 }

@@ -31,6 +31,7 @@ namespace BerberApp.Business.Services
         {
             var email = dto.Email.Trim().ToLower();
             var phoneNumber = NormalizePhoneNumber(dto.PhoneNumber);
+            var accountType = NormalizeAccountType(dto.AccountType);
             var emailExists = _context.Users.Any(x => x.Email == email);
 
             if (emailExists)
@@ -53,7 +54,7 @@ namespace BerberApp.Business.Services
                 Email = email,
                 PhoneNumber = phoneNumber,
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password),
-                Role = "User",
+                Role = accountType,
                 EmailConfirmed = false,
                 PhoneNumberConfirmed = false,
                 EmailVerificationTokenHash = BCrypt.Net.BCrypt.HashPassword(verificationToken),
@@ -64,6 +65,19 @@ namespace BerberApp.Business.Services
 
             _context.Users.Add(user);
             _context.SaveChanges();
+
+            if (accountType == "Barber")
+            {
+                var barber = new Barber
+                {
+                    UserId = user.Id,
+                    FullName = user.FullName,
+                    Specialty = dto.Specialty.Trim()
+                };
+
+                _context.Barbers.Add(barber);
+                _context.SaveChanges();
+            }
 
             SendVerificationEmail(user.Email, verificationToken);
             SendPhoneVerificationCode(user.PhoneNumber, phoneCode);
@@ -445,6 +459,13 @@ namespace BerberApp.Business.Services
             }
 
             return clean;
+        }
+
+        private static string NormalizeAccountType(string accountType)
+        {
+            return accountType.Trim().Equals("Barber", StringComparison.OrdinalIgnoreCase)
+                ? "Barber"
+                : "User";
         }
 
         private string CreateFrontendLink(string path, string email, string token, string tokenParameterName = "token")

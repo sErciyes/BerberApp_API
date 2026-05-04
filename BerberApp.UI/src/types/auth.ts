@@ -8,6 +8,8 @@ export type RegisterRequest = {
   email: string;
   phoneNumber: string;
   password: string;
+  accountType: "User" | "Barber";
+  specialty: string;
 };
 
 export type LoginResponse = {
@@ -16,7 +18,7 @@ export type LoginResponse = {
   fullName: string;
   email: string;
   phoneNumber: string;
-  role: "User" | "Admin";
+  role: "User" | "Admin" | "Barber";
   emailConfirmed: boolean;
   phoneNumberConfirmed: boolean;
 };

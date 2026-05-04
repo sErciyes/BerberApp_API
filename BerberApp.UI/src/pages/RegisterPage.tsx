@@ -12,6 +12,8 @@ export function RegisterPage() {
   const [email, setEmail] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [password, setPassword] = useState("");
+  const [accountType, setAccountType] = useState<"User" | "Barber">("User");
+  const [specialty, setSpecialty] = useState("");
   const [verificationToken, setVerificationToken] = useState("");
   const [phoneCode, setPhoneCode] = useState("");
   const [error, setError] = useState("");
@@ -25,7 +27,7 @@ export function RegisterPage() {
     setSuccess("");
 
     try {
-      const response = await register({ fullName, email, phoneNumber, password });
+      const response = await register({ fullName, email, phoneNumber, password, accountType, specialty });
       setSuccess(response.data?.message ?? response.message ?? "Kayit basarili. Email dogrulama gerekli.");
       setPhoneCode(response.data?.developmentToken ?? "");
     } catch (err) {
@@ -109,21 +111,21 @@ export function RegisterPage() {
         </div>
         <h1>Berber randevulari icin sade bir kontrol merkezi.</h1>
         <p>
-          Kayit olan kullanicilar User rolunde baslar. Admin rol yonetimi API uzerinden kontrollu yapilir.
+          Kullanici randevu alir, berber kendi mesajlarini yanitlar. Admin rol yonetimi API uzerinden kontrollu yapilir.
         </p>
 
         <div className="auth-metrics">
           <div>
             <strong>User</strong>
-            <span>Varsayilan</span>
+            <span>Randevu</span>
+          </div>
+          <div>
+            <strong>Barber</strong>
+            <span>Mesaj</span>
           </div>
           <div>
             <strong>Admin</strong>
             <span>Yonetim</span>
-          </div>
-          <div>
-            <strong>BCrypt</strong>
-            <span>Sifreleme</span>
           </div>
         </div>
 
@@ -141,15 +143,34 @@ export function RegisterPage() {
         <div className="auth-card-header">
           <span>Baslayalim</span>
           <h2>Kayit ol</h2>
-          <p>Yeni kullanici hesabi olustur.</p>
+          <p>Kullanici veya berber hesabi olustur.</p>
         </div>
 
         <form className="auth-form" onSubmit={handleSubmit}>
           {error && <Notice type="error">{error}</Notice>}
           {success && <Notice type="success">{success}</Notice>}
+          <div className="segmented-control" aria-label="Hesap tipi">
+            <button
+              className={accountType === "User" ? "active" : ""}
+              type="button"
+              onClick={() => setAccountType("User")}
+            >
+              Kullanici
+            </button>
+            <button
+              className={accountType === "Barber" ? "active" : ""}
+              type="button"
+              onClick={() => setAccountType("Barber")}
+            >
+              Berber
+            </button>
+          </div>
           <FormField label="Ad Soyad" value={fullName} onChange={(e) => setFullName(e.target.value)} required />
           <FormField label="Email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
           <FormField label="Telefon" value={phoneNumber} placeholder="05xx xxx xx xx" onChange={(e) => setPhoneNumber(e.target.value)} required />
+          {accountType === "Barber" && (
+            <FormField label="Uzmanlik" value={specialty} placeholder="Sakal tras, sac kesim" onChange={(e) => setSpecialty(e.target.value)} />
+          )}
           <FormField label="Sifre" type="password" value={password} onChange={(e) => setPassword(e.target.value)} minLength={6} required />
           <Button type="submit" disabled={loading}>
             {loading ? "Kayit yapiliyor" : "Kayit ol"}

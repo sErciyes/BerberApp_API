@@ -6,7 +6,7 @@ import { Button } from "./Button";
 
 export function Layout() {
   const navigate = useNavigate();
-  const { auth, isAdmin, signOut } = useAuth();
+  const { auth, isAdmin, isBarber, signOut } = useAuth();
   const { theme, toggleTheme } = useTheme();
 
   function handleLogout() {
@@ -32,10 +32,12 @@ export function Layout() {
           </NavLink>
           {auth && (
             <>
-              <NavLink to="/appointments/my">
-                <CalendarCheck size={18} />
-                Randevularim
-              </NavLink>
+              {!isBarber && (
+                <NavLink to="/appointments/my">
+                  <CalendarCheck size={18} />
+                  Randevularim
+                </NavLink>
+              )}
               <NavLink to="/messages">
                 <MessageCircle size={18} />
                 Mesajlar

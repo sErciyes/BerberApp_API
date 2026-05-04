@@ -70,6 +70,15 @@ namespace BerberApp.DataAccess.Context
                 entity.Property(x => x.FullName).HasMaxLength(100).IsRequired();
 
                 entity.Property(x => x.Specialty).HasMaxLength(100);
+
+                entity.HasOne(x => x.User)
+                .WithOne(x => x.BarberProfile)
+                .HasForeignKey<Barber>(x => x.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasIndex(x => x.UserId)
+                .IsUnique()
+                .HasFilter("[UserId] IS NOT NULL");
             });
 
             modelBuilder.Entity<Appointment>(entity =>

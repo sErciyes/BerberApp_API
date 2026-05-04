@@ -7,10 +7,11 @@ import { getErrorMessage } from "../api/axiosClient";
 import { Button } from "../components/Button";
 import { Notice } from "../components/Notice";
 import { useAuth } from "../context/AuthContext";
+import { getToken } from "../utils/tokenStorage";
 import type { ChatMessage, Conversation } from "../types/chat";
 
 export function MessagesPage() {
-  const { isAdmin } = useAuth();
+  const { isAdmin, isBarber } = useAuth();
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [selectedConversation, setSelectedConversation] = useState<Conversation | null>(null);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -20,10 +21,12 @@ export function MessagesPage() {
   const [hubReady, setHubReady] = useState(false);
   const connectionRef = useRef<HubConnection | null>(null);
 
-  const title = isAdmin ? "Admin Mesajlari" : "Mesajlar";
+  const title = isAdmin ? "Admin Mesajlari" : isBarber ? "Berber Mesajlari" : "Mesajlar";
   const selectedTitle = selectedConversation
     ? isAdmin
       ? `${selectedConversation.userFullName} - ${selectedConversation.barberFullName}`
+      : isBarber
+        ? selectedConversation.userFullName
       : selectedConversation.barberFullName
     : "Konusma sec";
 
@@ -71,6 +74,11 @@ export function MessagesPage() {
   }
 
   useEffect(() => {
+    if (!getToken()) {
+      setError("Mesajlasma icin once giris yapmalisin.");
+      return;
+    }
+
     const connection = createChatConnection();
     connectionRef.current = connection;
 
@@ -81,7 +89,7 @@ export function MessagesPage() {
     connection
       .start()
       .then(() => setHubReady(true))
-      .catch(() => setError("SignalR baglantisi kurulamadi."));
+      .catch(() => setError("SignalR baglantisi kurulamadi. Oturum suresi dolduysa tekrar giris yap."));
 
     return () => {
       setHubReady(false);
@@ -131,7 +139,7 @@ export function MessagesPage() {
       <div className="page-heading row-heading">
         <div>
           <h1>{title}</h1>
-          <p>{isAdmin ? "Kullanicilarin berber konusmalarini takip et." : "Berberlerle anlik olarak yazis."}</p>
+          <p>{isAdmin ? "Kullanicilarin berber konusmalarini takip et." : isBarber ? "Kullanicilardan gelen mesajlari yanitla." : "Berberlerle anlik olarak yazis."}</p>
         </div>
       </div>
 
@@ -153,7 +161,7 @@ export function MessagesPage() {
               type="button"
               onClick={() => setSelectedConversation(conversation)}
             >
-              <strong>{isAdmin ? conversation.userFullName : conversation.barberFullName}</strong>
+              <strong>{isAdmin || isBarber ? conversation.userFullName : conversation.barberFullName}</strong>
               <span>{conversation.barberFullName} - {conversation.barberSpecialty || "Genel hizmet"}</span>
               <small>{conversation.lastMessage || "Konusma baslatildi"}</small>
               {conversation.unreadCount > 0 && <em>{conversation.unreadCount}</em>}

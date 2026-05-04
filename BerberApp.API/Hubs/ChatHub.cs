@@ -20,8 +20,9 @@ namespace BerberApp.API.Hubs
         {
             var userId = GetCurrentUserId();
             var isAdmin = IsAdmin();
+            var isBarber = IsBarber();
 
-            if (!_chatService.CanAccessConversation(conversationId, userId, isAdmin))
+            if (!_chatService.CanAccessConversation(conversationId, userId, isAdmin, isBarber))
             {
                 throw new HubException("Bu konusmaya erisim yetkin yok.");
             }
@@ -33,7 +34,8 @@ namespace BerberApp.API.Hubs
         {
             var userId = GetCurrentUserId();
             var isAdmin = IsAdmin();
-            var result = _chatService.SendMessage(conversationId, userId, isAdmin, content);
+            var isBarber = IsBarber();
+            var result = _chatService.SendMessage(conversationId, userId, isAdmin, isBarber, content);
 
             if (!result.Success)
             {
@@ -59,6 +61,11 @@ namespace BerberApp.API.Hubs
         private bool IsAdmin()
         {
             return Context.User?.IsInRole("Admin") == true;
+        }
+
+        private bool IsBarber()
+        {
+            return Context.User?.IsInRole("Barber") == true;
         }
 
         private static string GetGroupName(int conversationId)

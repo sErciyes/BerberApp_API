@@ -22,7 +22,7 @@ namespace BerberApp.API.Controllers
         [HttpGet]
         public IActionResult GetConversations()
         {
-            var conversations = _chatService.GetConversations(GetCurrentUserId(), User.IsInRole("Admin"));
+            var conversations = _chatService.GetConversations(GetCurrentUserId(), IsAdmin(), IsBarber());
             return Ok(ApiResponse<object>.Ok(conversations));
         }
 
@@ -42,7 +42,7 @@ namespace BerberApp.API.Controllers
         [HttpGet("{id}/messages")]
         public IActionResult GetMessages(int id)
         {
-            var result = _chatService.GetMessages(id, GetCurrentUserId(), User.IsInRole("Admin"));
+            var result = _chatService.GetMessages(id, GetCurrentUserId(), IsAdmin(), IsBarber());
 
             if (!result.Success)
             {
@@ -55,7 +55,7 @@ namespace BerberApp.API.Controllers
         [HttpPost("{id}/messages")]
         public IActionResult SendMessage(int id, SendMessageDto dto)
         {
-            var result = _chatService.SendMessage(id, GetCurrentUserId(), User.IsInRole("Admin"), dto.Content);
+            var result = _chatService.SendMessage(id, GetCurrentUserId(), IsAdmin(), IsBarber(), dto.Content);
 
             if (!result.Success)
             {
@@ -68,7 +68,7 @@ namespace BerberApp.API.Controllers
         [HttpPatch("{id}/read")]
         public IActionResult MarkAsRead(int id)
         {
-            var result = _chatService.MarkAsRead(id, GetCurrentUserId(), User.IsInRole("Admin"));
+            var result = _chatService.MarkAsRead(id, GetCurrentUserId(), IsAdmin(), IsBarber());
 
             if (!result.Success)
             {
@@ -88,6 +88,16 @@ namespace BerberApp.API.Controllers
             }
 
             return userId;
+        }
+
+        private bool IsAdmin()
+        {
+            return User.IsInRole("Admin");
+        }
+
+        private bool IsBarber()
+        {
+            return User.IsInRole("Barber");
         }
     }
 }

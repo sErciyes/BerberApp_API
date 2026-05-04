@@ -51,10 +51,10 @@ namespace BerberApp.Business.Services
                     .First(x => x.Id == conversation.Id);
             }
 
-            return ServiceResult<ConversationDto>.Ok(MapConversation(conversation, userId, false));
+            return ServiceResult<ConversationDto>.Ok(MapConversation(conversation, userId, false, false));
         }
 
-        public List<ConversationDto> GetConversations(int userId, bool isAdmin)
+        public List<ConversationDto> GetConversations(int userId, bool isAdmin, bool isBarber)
         {
             var query = _context.Conversations
                 .Include(x => x.User)
@@ -62,20 +62,24 @@ namespace BerberApp.Business.Services
                 .Include(x => x.Messages)
                 .AsQueryable();
 
-            if (!isAdmin)
+            if (isBarber)
+            {
+                query = query.Where(x => x.Barber.UserId == userId);
+            }
+            else if (!isAdmin)
             {
                 query = query.Where(x => x.UserId == userId);
             }
 
             return query
                 .OrderByDescending(x => x.LastMessageAt)
-                .Select(x => MapConversation(x, userId, isAdmin))
+                .Select(x => MapConversation(x, userId, isAdmin, isBarber))
                 .ToList();
         }
 
-        public ServiceResult<List<MessageDto>> GetMessages(int conversationId, int userId, bool isAdmin)
+        public ServiceResult<List<MessageDto>> GetMessages(int conversationId, int userId, bool isAdmin, bool isBarber)
         {
-            if (!CanAccessConversation(conversationId, userId, isAdmin))
+            if (!CanAccessConversation(conversationId, userId, isAdmin, isBarber))
             {
                 return ServiceResult<List<MessageDto>>.Fail("Bu konusmaya erisim yetkin yok.");
             }
@@ -90,7 +94,7 @@ namespace BerberApp.Business.Services
             return ServiceResult<List<MessageDto>>.Ok(messages);
         }
 
-        public ServiceResult<MessageDto> SendMessage(int conversationId, int senderUserId, bool isAdmin, string content)
+        public ServiceResult<MessageDto> SendMessage(int conversationId, int senderUserId, bool isAdmin, bool isBarber, string content)
         {
             content = content.Trim();
 
@@ -104,14 +108,16 @@ namespace BerberApp.Business.Services
                 return ServiceResult<MessageDto>.Fail("Mesaj en fazla 1000 karakter olabilir.");
             }
 
-            var conversation = _context.Conversations.FirstOrDefault(x => x.Id == conversationId);
+            var conversation = _context.Conversations
+                .Include(x => x.Barber)
+                .FirstOrDefault(x => x.Id == conversationId);
 
             if (conversation == null)
             {
                 return ServiceResult<MessageDto>.Fail("Konusma bulunamadi.");
             }
 
-            if (!isAdmin && conversation.UserId != senderUserId)
+            if (!CanAccessConversation(conversationId, senderUserId, isAdmin, isBarber))
             {
                 return ServiceResult<MessageDto>.Fail("Bu konusmaya mesaj gonderme yetkin yok.");
             }
@@ -137,9 +143,9 @@ namespace BerberApp.Business.Services
             return ServiceResult<MessageDto>.Ok(MapMessage(message, senderUserId));
         }
 
-        public ServiceResult<bool> MarkAsRead(int conversationId, int userId, bool isAdmin)
+        public ServiceResult<bool> MarkAsRead(int conversationId, int userId, bool isAdmin, bool isBarber)
         {
-            if (!CanAccessConversation(conversationId, userId, isAdmin))
+            if (!CanAccessConversation(conversationId, userId, isAdmin, isBarber))
             {
                 return ServiceResult<bool>.Fail("Bu konusmaya erisim yetkin yok.");
             }
@@ -158,12 +164,14 @@ namespace BerberApp.Business.Services
             return ServiceResult<bool>.Ok(true);
         }
 
-        public bool CanAccessConversation(int conversationId, int userId, bool isAdmin)
+        public bool CanAccessConversation(int conversationId, int userId, bool isAdmin, bool isBarber)
         {
-            return _context.Conversations.Any(x => x.Id == conversationId && (isAdmin || x.UserId == userId));
+            return _context.Conversations.Any(x =>
+                x.Id == conversationId &&
+                (isAdmin || x.UserId == userId || (isBarber && x.Barber.UserId == userId)));
         }
 
-        private static ConversationDto MapConversation(Conversation conversation, int currentUserId, bool isAdmin)
+        private static ConversationDto MapConversation(Conversation conversation, int currentUserId, bool isAdmin, bool isBarber)
         {
             var lastMessage = conversation.Messages
                 .OrderByDescending(x => x.CreatedAt)

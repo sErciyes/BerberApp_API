@@ -5,6 +5,7 @@ import { clearAuth, getAuth, saveAuth } from "../utils/tokenStorage";
 type AuthContextValue = {
   auth: LoginResponse | null;
   isAdmin: boolean;
+  isBarber: boolean;
   signIn: (auth: LoginResponse) => void;
   updateAuth: (changes: Partial<LoginResponse>) => void;
   signOut: () => void;
@@ -19,6 +20,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return {
       auth,
       isAdmin: auth?.role === "Admin",
+      isBarber: auth?.role === "Barber",
       signIn: (nextAuth) => {
         saveAuth(nextAuth);
         setAuth(nextAuth);
