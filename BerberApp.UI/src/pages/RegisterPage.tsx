@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { CalendarClock, LockKeyhole, Scissors } from "lucide-react";
-import { register, resendEmailVerification, verifyEmail } from "../api/authApi";
+import { register, requestPhoneVerification, resendEmailVerification, verifyEmail, verifyPhone } from "../api/authApi";
 import { getErrorMessage } from "../api/axiosClient";
 import { Button } from "../components/Button";
 import { FormField } from "../components/FormField";
@@ -10,8 +10,10 @@ import { Notice } from "../components/Notice";
 export function RegisterPage() {
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
   const [password, setPassword] = useState("");
   const [verificationToken, setVerificationToken] = useState("");
+  const [phoneCode, setPhoneCode] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
@@ -23,9 +25,9 @@ export function RegisterPage() {
     setSuccess("");
 
     try {
-      const response = await register({ fullName, email, password });
+      const response = await register({ fullName, email, phoneNumber, password });
       setSuccess(response.data?.message ?? response.message ?? "Kayit basarili. Email dogrulama gerekli.");
-      setVerificationToken(response.data?.developmentToken ?? "");
+      setPhoneCode(response.data?.developmentToken ?? "");
     } catch (err) {
       setError(getErrorMessage(err));
     } finally {
@@ -58,6 +60,39 @@ export function RegisterPage() {
       const response = await resendEmailVerification({ email });
       setSuccess(response.data?.message ?? response.message ?? "Dogrulama maili tekrar gonderildi.");
       setVerificationToken(response.data?.developmentToken ?? "");
+    } catch (err) {
+      setError(getErrorMessage(err));
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function handleRequestPhoneCode() {
+    setLoading(true);
+    setError("");
+    setSuccess("");
+
+    try {
+      const response = await requestPhoneVerification({ phoneNumber });
+      setSuccess(response.data?.message ?? response.message ?? "Telefon dogrulama kodu gonderildi.");
+      setPhoneCode(response.data?.developmentToken ?? "");
+    } catch (err) {
+      setError(getErrorMessage(err));
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function handleVerifyPhone(event: React.FormEvent) {
+    event.preventDefault();
+    setLoading(true);
+    setError("");
+    setSuccess("");
+
+    try {
+      const response = await verifyPhone({ phoneNumber, code: phoneCode });
+      setSuccess(response.data?.message ?? response.message ?? "Telefon numarasi dogrulandi.");
+      setPhoneCode("");
     } catch (err) {
       setError(getErrorMessage(err));
     } finally {
@@ -114,6 +149,7 @@ export function RegisterPage() {
           {success && <Notice type="success">{success}</Notice>}
           <FormField label="Ad Soyad" value={fullName} onChange={(e) => setFullName(e.target.value)} required />
           <FormField label="Email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+          <FormField label="Telefon" value={phoneNumber} placeholder="05xx xxx xx xx" onChange={(e) => setPhoneNumber(e.target.value)} required />
           <FormField label="Sifre" type="password" value={password} onChange={(e) => setPassword(e.target.value)} minLength={6} required />
           <Button type="submit" disabled={loading}>
             {loading ? "Kayit yapiliyor" : "Kayit ol"}
@@ -137,6 +173,22 @@ export function RegisterPage() {
           <p className="form-note">
             Hesabin var mi? <Link to="/login">Giris yap</Link>
           </p>
+        </form>
+
+        <form className="auth-form auth-followup" onSubmit={handleVerifyPhone}>
+          {phoneCode && (
+            <div className="token-box">
+              <span>Development SMS kodu</span>
+              <strong>{phoneCode}</strong>
+            </div>
+          )}
+          <FormField label="Telefon dogrulama kodu" value={phoneCode} onChange={(e) => setPhoneCode(e.target.value)} minLength={6} maxLength={6} required />
+          <Button type="submit" variant="secondary" disabled={loading || !phoneNumber}>
+            Telefonu Dogrula
+          </Button>
+          <Button type="button" variant="ghost" disabled={loading || !phoneNumber} onClick={handleRequestPhoneCode}>
+            SMS Kodunu Tekrar Gonder
+          </Button>
         </form>
       </section>
     </div>

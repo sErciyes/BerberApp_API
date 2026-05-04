@@ -13,6 +13,10 @@ namespace BerberApp.Business.Dtos.UserDtos
         [MaxLength(150, ErrorMessage = "Email en fazla 150 karakter olabilir.")]
         public string Email { get; set; } = "";
 
+        [Required(ErrorMessage = "Telefon numarasi zorunludur.")]
+        [MaxLength(20, ErrorMessage = "Telefon numarasi en fazla 20 karakter olabilir.")]
+        public string PhoneNumber { get; set; } = "";
+
         [Required(ErrorMessage = "Sifre zorunludur.")]
         [MinLength(6, ErrorMessage = "Sifre en az 6 karakter olmalidir.")]
         public string Password { get; set; } = "";

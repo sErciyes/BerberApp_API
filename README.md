@@ -36,6 +36,7 @@ API -> Business -> DataAccess -> Entities
 
 - Kullanici kayit ve giris islemleri
 - Email dogrulama akisi
+- Telefon numarasi ile kayit/giris ve development SMS dogrulama akisi
 - Mail onayli sifre sifirlama ve sifre degistirme
 - BCrypt ile sifre hashleme
 - JWT token uretimi
@@ -89,6 +90,9 @@ Ornek:
       "FromEmail": "YOUR_EMAIL@gmail.com",
       "FromName": "BerberApp"
     }
+  },
+  "Sms": {
+    "ShowDevelopmentCodes": true
   }
 }
 ```
@@ -152,6 +156,8 @@ Swagger `Bearer` kismini otomatik ekler.
 - `POST /api/auth/login`
 - `POST /api/auth/verify-email`
 - `POST /api/auth/resend-email-verification`
+- `POST /api/auth/request-phone-verification`
+- `POST /api/auth/verify-phone`
 - `POST /api/auth/forgot-password`
 - `POST /api/auth/reset-password`
 - `POST /api/auth/request-password-change` - Authenticated
@@ -180,6 +186,12 @@ Gercek mail gonderimi icin `appsettings.Development.json` veya environment varia
 ```
 
 Gmail kullanirken normal hesap sifresi degil, Google hesabindan olusturulan `App Password` kullanilmalidir.
+
+## SMS Dogrulama
+
+SMS gonderimi ucretli servis gerektirdigi icin projede development amacli `DevelopmentSmsService` bulunur. Bu servis SMS'i gercekten gondermez; console'a yazar ve `Sms:ShowDevelopmentCodes` true ise test kodunu response icindeki `developmentToken` alaninda dondurur.
+
+Bu yapi production icin `ISmsService` uzerinden Twilio/Firebase gibi gercek bir provider'a kolayca tasinabilir.
 
 ### Users
 

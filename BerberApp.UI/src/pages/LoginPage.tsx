@@ -11,7 +11,7 @@ import { useAuth } from "../context/AuthContext";
 export function LoginPage() {
   const navigate = useNavigate();
   const { signIn } = useAuth();
-  const [email, setEmail] = useState("");
+  const [emailOrPhone, setEmailOrPhone] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -22,7 +22,7 @@ export function LoginPage() {
     setError("");
 
     try {
-      const response = await login({ email, password });
+      const response = await login({ emailOrPhone, password });
 
       if (response.data) {
         signIn(response.data);
@@ -81,7 +81,7 @@ export function LoginPage() {
 
         <form className="auth-form" onSubmit={handleSubmit}>
           {error && <Notice type="error">{error}</Notice>}
-          <FormField label="Email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+          <FormField label="Email veya Telefon" value={emailOrPhone} onChange={(e) => setEmailOrPhone(e.target.value)} required />
           <FormField label="Sifre" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
           <Button type="submit" disabled={loading}>
             {loading ? "Giris yapiliyor" : "Giris yap"}

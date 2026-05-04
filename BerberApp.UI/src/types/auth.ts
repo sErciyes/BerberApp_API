@@ -1,11 +1,12 @@
 export type LoginRequest = {
-  email: string;
+  emailOrPhone: string;
   password: string;
 };
 
 export type RegisterRequest = {
   fullName: string;
   email: string;
+  phoneNumber: string;
   password: string;
 };
 
@@ -14,8 +15,10 @@ export type LoginResponse = {
   userId: number;
   fullName: string;
   email: string;
+  phoneNumber: string;
   role: "User" | "Admin";
   emailConfirmed: boolean;
+  phoneNumberConfirmed: boolean;
 };
 
 export type AuthActionResponse = {

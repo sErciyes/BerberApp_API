@@ -31,6 +31,9 @@ namespace BerberApp.DataAccess.Context
                 HasMaxLength(150).
                 IsRequired();
 
+                entity.Property(x => x.PhoneNumber)
+                .HasMaxLength(20);
+
                 entity.Property(x => x.PasswordHash).
                 IsRequired();
 
@@ -40,6 +43,12 @@ namespace BerberApp.DataAccess.Context
 
                 entity.Property(x => x.EmailConfirmed)
                 .HasDefaultValue(false);
+
+                entity.Property(x => x.PhoneNumberConfirmed)
+                .HasDefaultValue(false);
+
+                entity.Property(x => x.PhoneVerificationCodeHash)
+                .HasMaxLength(500);
 
                 entity.Property(x => x.EmailVerificationTokenHash)
                 .HasMaxLength(500);

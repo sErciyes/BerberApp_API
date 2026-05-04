@@ -17,17 +17,20 @@ namespace BerberApp.Business.Services
         private readonly AppDbContext _context;
         private readonly IConfiguration _configuration;
         private readonly IEmailService _emailService;
+        private readonly ISmsService _smsService;
 
-        public AuthService(AppDbContext context, IConfiguration configuration, IEmailService emailService)
+        public AuthService(AppDbContext context, IConfiguration configuration, IEmailService emailService, ISmsService smsService)
         {
             _context = context;
             _configuration = configuration;
             _emailService = emailService;
+            _smsService = smsService;
         }
 
         public ServiceResult<AuthActionResponseDto> Register(RegisterDto dto)
         {
             var email = dto.Email.Trim().ToLower();
+            var phoneNumber = NormalizePhoneNumber(dto.PhoneNumber);
             var emailExists = _context.Users.Any(x => x.Email == email);
 
             if (emailExists)
@@ -35,32 +38,53 @@ namespace BerberApp.Business.Services
                 return ServiceResult<AuthActionResponseDto>.Fail("Bu email zaten kayitli.");
             }
 
+            var phoneExists = _context.Users.Any(x => x.PhoneNumber == phoneNumber);
+
+            if (phoneExists)
+            {
+                return ServiceResult<AuthActionResponseDto>.Fail("Bu telefon numarasi zaten kayitli.");
+            }
+
             var verificationToken = GenerateToken();
+            var phoneCode = GeneratePhoneCode();
             var user = new User
             {
                 FullName = dto.FullName.Trim(),
                 Email = email,
+                PhoneNumber = phoneNumber,
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password),
                 Role = "User",
                 EmailConfirmed = false,
+                PhoneNumberConfirmed = false,
                 EmailVerificationTokenHash = BCrypt.Net.BCrypt.HashPassword(verificationToken),
-                EmailVerificationTokenExpiresAt = DateTime.UtcNow.AddHours(24)
+                EmailVerificationTokenExpiresAt = DateTime.UtcNow.AddHours(24),
+                PhoneVerificationCodeHash = BCrypt.Net.BCrypt.HashPassword(phoneCode),
+                PhoneVerificationCodeExpiresAt = DateTime.UtcNow.AddMinutes(10)
             };
 
             _context.Users.Add(user);
             _context.SaveChanges();
 
             SendVerificationEmail(user.Email, verificationToken);
+            SendPhoneVerificationCode(user.PhoneNumber, phoneCode);
 
             return ServiceResult<AuthActionResponseDto>.Ok(CreateActionResponse(
-                "Kayit basarili. Giris yapmadan once email adresini dogrula.",
-                verificationToken));
+                "Kayit basarili. Email ve telefon dogrulama adimlarini tamamla.",
+                phoneCode,
+                ShouldShowDevelopmentSmsCodes()));
         }
 
         public ServiceResult<LoginResponseDto> Login(LoginDto dto)
         {
-            var email = dto.Email.Trim().ToLower();
-            var user = _context.Users.FirstOrDefault(x => x.Email == email);
+            var loginIdentifier = string.IsNullOrWhiteSpace(dto.EmailOrPhone)
+                ? dto.Email.Trim()
+                : dto.EmailOrPhone.Trim();
+            var isEmailLogin = loginIdentifier.Contains('@');
+            var normalizedPhone = isEmailLogin ? "" : NormalizePhoneNumber(loginIdentifier);
+            var normalizedEmail = isEmailLogin ? loginIdentifier.ToLower() : "";
+            var user = isEmailLogin
+                ? _context.Users.FirstOrDefault(x => x.Email == normalizedEmail)
+                : _context.Users.FirstOrDefault(x => x.PhoneNumber == normalizedPhone);
 
             if (user == null)
             {
@@ -74,9 +98,14 @@ namespace BerberApp.Business.Services
                 return ServiceResult<LoginResponseDto>.Fail("Sifre yanlis.");
             }
 
-            if (!user.EmailConfirmed)
+            if (isEmailLogin && !user.EmailConfirmed)
             {
                 return ServiceResult<LoginResponseDto>.Fail("Email adresi dogrulanmadan giris yapilamaz.");
+            }
+
+            if (!isEmailLogin && !user.PhoneNumberConfirmed)
+            {
+                return ServiceResult<LoginResponseDto>.Fail("Telefon numarasi dogrulanmadan telefon ile giris yapilamaz.");
             }
 
             var token = CreateToken(user);
@@ -87,8 +116,10 @@ namespace BerberApp.Business.Services
                 UserId = user.Id,
                 FullName = user.FullName,
                 Email = user.Email,
+                PhoneNumber = user.PhoneNumber ?? "",
                 Role = user.Role,
-                EmailConfirmed = user.EmailConfirmed
+                EmailConfirmed = user.EmailConfirmed,
+                PhoneNumberConfirmed = user.PhoneNumberConfirmed
             };
 
             return ServiceResult<LoginResponseDto>.Ok(response);
@@ -145,6 +176,59 @@ namespace BerberApp.Business.Services
             SendVerificationEmail(user.Email, token);
 
             return ServiceResult<AuthActionResponseDto>.Ok(CreateActionResponse("Yeni dogrulama maili gonderildi.", token));
+        }
+
+        public ServiceResult<AuthActionResponseDto> RequestPhoneVerification(RequestPhoneVerificationDto dto)
+        {
+            var phoneNumber = NormalizePhoneNumber(dto.PhoneNumber);
+            var user = _context.Users.FirstOrDefault(x => x.PhoneNumber == phoneNumber);
+
+            if (user == null)
+            {
+                return ServiceResult<AuthActionResponseDto>.Fail("Telefon numarasina ait kullanici bulunamadi.");
+            }
+
+            if (user.PhoneNumberConfirmed)
+            {
+                return ServiceResult<AuthActionResponseDto>.Ok(CreateActionResponse("Telefon numarasi zaten dogrulanmis."));
+            }
+
+            var code = GeneratePhoneCode();
+            user.PhoneVerificationCodeHash = BCrypt.Net.BCrypt.HashPassword(code);
+            user.PhoneVerificationCodeExpiresAt = DateTime.UtcNow.AddMinutes(10);
+            _context.SaveChanges();
+
+            SendPhoneVerificationCode(user.PhoneNumber!, code);
+
+            return ServiceResult<AuthActionResponseDto>.Ok(CreateActionResponse("Telefon dogrulama kodu gonderildi.", code, ShouldShowDevelopmentSmsCodes()));
+        }
+
+        public ServiceResult<AuthActionResponseDto> VerifyPhone(VerifyPhoneDto dto)
+        {
+            var phoneNumber = NormalizePhoneNumber(dto.PhoneNumber);
+            var user = _context.Users.FirstOrDefault(x => x.PhoneNumber == phoneNumber);
+
+            if (user == null)
+            {
+                return ServiceResult<AuthActionResponseDto>.Fail("Telefon numarasina ait kullanici bulunamadi.");
+            }
+
+            if (user.PhoneNumberConfirmed)
+            {
+                return ServiceResult<AuthActionResponseDto>.Ok(CreateActionResponse("Telefon numarasi zaten dogrulanmis."));
+            }
+
+            if (!IsTokenValid(dto.Code, user.PhoneVerificationCodeHash, user.PhoneVerificationCodeExpiresAt))
+            {
+                return ServiceResult<AuthActionResponseDto>.Fail("Telefon dogrulama kodu gecersiz veya suresi dolmus.");
+            }
+
+            user.PhoneNumberConfirmed = true;
+            user.PhoneVerificationCodeHash = null;
+            user.PhoneVerificationCodeExpiresAt = null;
+            _context.SaveChanges();
+
+            return ServiceResult<AuthActionResponseDto>.Ok(CreateActionResponse("Telefon numarasi dogrulandi."));
         }
 
         public ServiceResult<AuthActionResponseDto> ForgotPassword(ForgotPasswordDto dto)
@@ -282,6 +366,7 @@ namespace BerberApp.Business.Services
             {
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                 new Claim(ClaimTypes.Email, user.Email),
+                new Claim(ClaimTypes.MobilePhone, user.PhoneNumber ?? ""),
                 new Claim(ClaimTypes.Role, user.Role)
             };
 
@@ -301,6 +386,11 @@ namespace BerberApp.Business.Services
         private static string GenerateToken()
         {
             return Convert.ToHexString(RandomNumberGenerator.GetBytes(32));
+        }
+
+        private static string GeneratePhoneCode()
+        {
+            return RandomNumberGenerator.GetInt32(100000, 1000000).ToString();
         }
 
         private static bool IsTokenValid(string token, string? tokenHash, DateTime? expiresAt)
@@ -325,6 +415,36 @@ namespace BerberApp.Business.Services
                     CreateFrontendLink("/verify-email", email, token),
                     "Bu link 24 saat gecerlidir."),
                 isHtml: true);
+        }
+
+        private void SendPhoneVerificationCode(string phoneNumber, string code)
+        {
+            _smsService.SendSms(phoneNumber, $"BerberApp telefon dogrulama kodun: {code}. Kod 10 dakika gecerlidir.");
+        }
+
+        private static string NormalizePhoneNumber(string phoneNumber)
+        {
+            var clean = phoneNumber
+                .Trim()
+                .Replace(" ", "")
+                .Replace("(", "")
+                .Replace(")", "")
+                .Replace("-", "");
+
+            if (clean.StartsWith("00"))
+            {
+                clean = "+" + clean[2..];
+            }
+            else if (clean.StartsWith("0"))
+            {
+                clean = "+90" + clean[1..];
+            }
+            else if (!clean.StartsWith("+"))
+            {
+                clean = "+90" + clean;
+            }
+
+            return clean;
         }
 
         private string CreateFrontendLink(string path, string email, string token, string tokenParameterName = "token")
@@ -379,18 +499,23 @@ namespace BerberApp.Business.Services
 """;
         }
 
-        private AuthActionResponseDto CreateActionResponse(string message, string? developmentToken = null)
+        private AuthActionResponseDto CreateActionResponse(string message, string? developmentToken = null, bool? showDevelopmentToken = null)
         {
             return new AuthActionResponseDto
             {
                 Message = message,
-                DevelopmentToken = ShouldShowDevelopmentTokens() ? developmentToken : null
+                DevelopmentToken = (showDevelopmentToken ?? ShouldShowDevelopmentTokens()) ? developmentToken : null
             };
         }
 
         private bool ShouldShowDevelopmentTokens()
         {
             return bool.TryParse(_configuration["Email:ShowDevelopmentTokens"], out var showTokens) && showTokens;
+        }
+
+        private bool ShouldShowDevelopmentSmsCodes()
+        {
+            return bool.TryParse(_configuration["Sms:ShowDevelopmentCodes"], out var showCodes) && showCodes;
         }
     }
 }

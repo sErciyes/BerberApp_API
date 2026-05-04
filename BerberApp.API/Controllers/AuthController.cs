@@ -46,6 +46,20 @@ namespace BerberApp.API.Controllers
             return ToActionResult(result, "Dogrulama maili gonderildi.");
         }
 
+        [HttpPost("request-phone-verification")]
+        public IActionResult RequestPhoneVerification(RequestPhoneVerificationDto dto)
+        {
+            var result = _authService.RequestPhoneVerification(dto);
+            return ToActionResult(result, "Telefon dogrulama kodu gonderildi.");
+        }
+
+        [HttpPost("verify-phone")]
+        public IActionResult VerifyPhone(VerifyPhoneDto dto)
+        {
+            var result = _authService.VerifyPhone(dto);
+            return ToActionResult(result, "Telefon numarasi dogrulandi.");
+        }
+
         [HttpPost("forgot-password")]
         public IActionResult ForgotPassword(ForgotPasswordDto dto)
         {

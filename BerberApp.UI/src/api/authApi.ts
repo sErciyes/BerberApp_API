@@ -22,6 +22,16 @@ export async function resendEmailVerification(payload: { email: string }) {
   return response.data;
 }
 
+export async function requestPhoneVerification(payload: { phoneNumber: string }) {
+  const response = await axiosClient.post<ApiResponse<AuthActionResponse>>("/auth/request-phone-verification", payload);
+  return response.data;
+}
+
+export async function verifyPhone(payload: { phoneNumber: string; code: string }) {
+  const response = await axiosClient.post<ApiResponse<AuthActionResponse>>("/auth/verify-phone", payload);
+  return response.data;
+}
+
 export async function forgotPassword(payload: { email: string }) {
   const response = await axiosClient.post<ApiResponse<AuthActionResponse>>("/auth/forgot-password", payload);
   return response.data;

@@ -9,6 +9,8 @@ namespace BerberApp.Business.Services
         ServiceResult<LoginResponseDto> Login(LoginDto dto);
         ServiceResult<AuthActionResponseDto> VerifyEmail(VerifyEmailDto dto);
         ServiceResult<AuthActionResponseDto> ResendEmailVerification(ForgotPasswordDto dto);
+        ServiceResult<AuthActionResponseDto> RequestPhoneVerification(RequestPhoneVerificationDto dto);
+        ServiceResult<AuthActionResponseDto> VerifyPhone(VerifyPhoneDto dto);
         ServiceResult<AuthActionResponseDto> ForgotPassword(ForgotPasswordDto dto);
         ServiceResult<AuthActionResponseDto> ResetPassword(ResetPasswordDto dto);
         ServiceResult<AuthActionResponseDto> RequestPasswordChange(int userId, RequestPasswordChangeDto dto);

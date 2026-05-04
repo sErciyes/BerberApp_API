@@ -12,9 +12,13 @@ namespace BerberApp.Entities.Concrete
         public int Id { get; set; }
         public string FullName { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;
+        public string? PhoneNumber { get; set; }
         public string PasswordHash { get; set; } = string.Empty;
         public string Role { get; set; } = "User";
         public bool EmailConfirmed { get; set; }
+        public bool PhoneNumberConfirmed { get; set; }
+        public string? PhoneVerificationCodeHash { get; set; }
+        public DateTime? PhoneVerificationCodeExpiresAt { get; set; }
         public string? EmailVerificationTokenHash { get; set; }
         public DateTime? EmailVerificationTokenExpiresAt { get; set; }
         public string? PasswordResetTokenHash { get; set; }

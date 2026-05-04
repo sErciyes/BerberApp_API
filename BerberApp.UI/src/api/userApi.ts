@@ -12,7 +12,7 @@ export async function getUsers() {
   return response.data;
 }
 
-export async function updateProfile(payload: { fullName: string; email: string }) {
+export async function updateProfile(payload: { fullName: string; email: string; phoneNumber: string }) {
   const response = await axiosClient.put<ApiResponse<User>>("/users/me", payload);
   return response.data;
 }
