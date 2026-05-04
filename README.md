@@ -4,7 +4,21 @@ BerberApp API, berber randevularini yonetmek icin gelistirilmis katmanli mimariy
 
 ## Proje Ozeti
 
-Bu API ile kullanicilar kayit olabilir, giris yapabilir, berberleri listeleyebilir ve randevu olusturabilir. Admin rolundeki kullanicilar berber CRUD islemlerini, kullanici rol yonetimini ve randevu durum guncellemelerini yapabilir.
+Bu API ile kullanicilar kayit olabilir, giris yapabilir, berberleri listeleyebilir, randevu olusturabilir ve berberlerle mesajlasabilir. Berber hesaplari kendilerine gelen mesajlari takip edebilir. Admin rolundeki kullanicilar berber CRUD islemlerini, kullanici rol yonetimini, mesajlari ve randevu durum guncellemelerini yonetebilir.
+
+## Ekran Goruntuleri
+
+| Berber kaydi | Berber listesi |
+| --- | --- |
+| ![Berber kayit ekrani](docs/screenshots/01-register-barber.png) | ![Berber listesi](docs/screenshots/03-barbers.png) |
+
+| Mesajlasma | Profil merkezi |
+| --- | --- |
+| ![Mesajlasma ekrani](docs/screenshots/04-messages.png) | ![Profil merkezi](docs/screenshots/05-profile.png) |
+
+| Login | Swagger |
+| --- | --- |
+| ![Login ekrani](docs/screenshots/02-login.png) | ![Swagger ekrani](docs/screenshots/06-swagger.png) |
 
 ## Kullanilan Teknolojiler
 
@@ -14,8 +28,10 @@ Bu API ile kullanicilar kayit olabilir, giris yapabilir, berberleri listeleyebil
 - SQL Server
 - JWT Authentication
 - Role-based Authorization
+- SignalR
 - Swagger / OpenAPI
 - BCrypt.Net-Next
+- React + Vite + TypeScript
 
 ## Katmanli Mimari
 
@@ -40,9 +56,11 @@ API -> Business -> DataAccess -> Entities
 - Mail onayli sifre sifirlama ve sifre degistirme
 - BCrypt ile sifre hashleme
 - JWT token uretimi
-- Admin/User rol ayrimi
+- Admin/User/Barber rol ayrimi
 - Swagger uzerinden JWT authorize destegi
 - Berber CRUD
+- Berber hesabi ile kayit olma
+- SignalR ile kullanici-berber mesajlasma
 - Randevu CRUD
 - Randevu saat cakismasi kontrolu
 - Randevu kurallari:
@@ -217,9 +235,31 @@ Bu yapi production icin `ISmsService` uzerinden Twilio/Firebase gibi gercek bir 
 - `PATCH /api/appointments/{id}/status` - Admin
 - `DELETE /api/appointments/{id}`
 
+### Conversations
+
+- `GET /api/conversations` - Authenticated
+- `POST /api/conversations` - Authenticated
+- `GET /api/conversations/{id}/messages` - Authenticated
+- `POST /api/conversations/{id}/messages` - Authenticated
+- `PATCH /api/conversations/{id}/read` - Authenticated
+
+### SignalR Hub
+
+- `/hubs/chat`
+
+Hub metotlari:
+
+- `JoinConversation(conversationId)`
+- `SendMessage(conversationId, content)`
+
 ## Roller
 
-Varsayilan olarak kayit olan her kullanici `User` rolunde olusur.
+Kayit ekraninda iki hesap tipi bulunur:
+
+- `User`: Randevu alabilir ve berberlerle mesajlasabilir.
+- `Barber`: Kendisine bagli berber profilini temsil eder ve gelen mesajlari yanitlayabilir.
+
+Admin rolu sistem yonetimi icindir.
 
 Admin rolu vermek icin:
 
