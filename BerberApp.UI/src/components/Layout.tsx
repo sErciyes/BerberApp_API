@@ -1,4 +1,4 @@
-import { CalendarCheck, LogOut, MessageCircle, Moon, Scissors, Shield, Sun, UserRound } from "lucide-react";
+import { CalendarCheck, LogOut, MapPinned, MessageCircle, Moon, Scissors, Shield, Sun, UserRound } from "lucide-react";
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { useTheme } from "../context/ThemeContext";
@@ -26,6 +26,10 @@ export function Layout() {
         </div>
 
         <nav className="nav">
+          <NavLink to="/shops">
+            <MapPinned size={18} />
+            Dukkanlar
+          </NavLink>
           <NavLink to="/barbers">
             <Scissors size={18} />
             Berberler

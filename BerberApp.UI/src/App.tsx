@@ -14,17 +14,19 @@ import { MessagesPage } from "./pages/MessagesPage";
 import { MyAppointmentsPage } from "./pages/MyAppointmentsPage";
 import { ProfilePage } from "./pages/ProfilePage";
 import { RegisterPage } from "./pages/RegisterPage";
+import { ShopsPage } from "./pages/ShopsPage";
 import { VerifyEmailPage } from "./pages/VerifyEmailPage";
 
 export function App() {
   return (
     <Routes>
       <Route element={<Layout />}>
-        <Route index element={<Navigate to="/barbers" replace />} />
+        <Route index element={<Navigate to="/shops" replace />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/verify-email" element={<VerifyEmailPage />} />
         <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+        <Route path="/shops" element={<ShopsPage />} />
         <Route path="/barbers" element={<BarbersPage />} />
 
         <Route element={<ProtectedRoute />}>

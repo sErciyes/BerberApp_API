@@ -60,6 +60,7 @@ export function BarbersPage() {
             <div>
               <h2>{barber.fullName}</h2>
               <p>{barber.specialty || "Genel hizmet"}</p>
+              {barber.shopName && <p className="card-subtext">{barber.shopName}</p>}
             </div>
             {auth && (
               <div className="card-actions">
