@@ -854,41 +854,37 @@ select option {
   position: relative;
   min-height: 460px;
   overflow: hidden;
-  background:
-    linear-gradient(135deg, rgba(56, 189, 248, 0.10), transparent 45%),
-    linear-gradient(45deg, rgba(34, 197, 94, 0.08), transparent 52%),
-    var(--surface-3);
+  background: var(--surface-3);
 }
 
-.map-grid {
-  position: absolute;
-  inset: 0;
-  opacity: 0.35;
-  background-image:
-    linear-gradient(var(--border) 1px, transparent 1px),
-    linear-gradient(90deg, var(--border) 1px, transparent 1px);
-  background-size: 54px 54px;
+.real-map {
+  z-index: 0;
 }
 
-.map-marker {
-  position: absolute;
-  display: grid;
-  place-items: center;
-  width: 42px;
-  height: 42px;
-  transform: translate(-50%, -100%);
-  border: 1px solid var(--accent-border);
-  border-radius: 999px;
+.real-map .leaflet-tile {
+  filter: saturate(0.82) brightness(0.78) contrast(1.08);
+}
+
+:root[data-theme="light"] .real-map .leaflet-tile {
+  filter: saturate(0.95) brightness(1) contrast(1);
+}
+
+.real-map .leaflet-control-attribution,
+.real-map .leaflet-control-zoom a,
+.real-map .leaflet-popup-content-wrapper,
+.real-map .leaflet-popup-tip {
+  border-color: var(--border);
   background: var(--surface);
-  color: var(--accent);
-  box-shadow: var(--shadow);
-  cursor: pointer;
+  color: var(--text);
 }
 
-.map-marker.active,
-.map-marker:hover {
-  background: var(--accent);
-  color: var(--accent-text);
+.real-map .leaflet-control-zoom a {
+  color: var(--text);
+}
+
+.real-map .leaflet-popup-content {
+  margin: 10px 12px;
+  color: var(--text);
 }
 
 .shop-detail-card {

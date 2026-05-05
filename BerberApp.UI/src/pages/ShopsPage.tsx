@@ -1,15 +1,12 @@
 import { Compass, ExternalLink, MapPin, Navigation, Store } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import L from "leaflet";
+import "leaflet/dist/leaflet.css";
+import { useEffect, useRef, useState } from "react";
 import { getNearbyShops, getShops } from "../api/shopApi";
 import { getErrorMessage } from "../api/axiosClient";
 import { Button } from "../components/Button";
 import { Notice } from "../components/Notice";
 import type { Shop } from "../types/shop";
-
-type MarkerPosition = {
-  left: number;
-  top: number;
-};
 
 export function ShopsPage() {
   const [shops, setShops] = useState<Shop[]>([]);
@@ -18,6 +15,9 @@ export function ShopsPage() {
   const [loading, setLoading] = useState(true);
   const [locating, setLocating] = useState(false);
   const [locationLabel, setLocationLabel] = useState("Tum dukkanlar");
+  const mapElementRef = useRef<HTMLDivElement | null>(null);
+  const mapRef = useRef<L.Map | null>(null);
+  const markersRef = useRef<L.Marker[]>([]);
 
   useEffect(() => {
     getShops()
@@ -61,9 +61,64 @@ export function ShopsPage() {
     );
   }
 
-  const markerPositions = useMemo(() => {
-    return createMarkerPositions(shops);
+  useEffect(() => {
+    if (!mapElementRef.current || mapRef.current) {
+      return;
+    }
+
+    mapRef.current = L.map(mapElementRef.current, {
+      center: [41.015, 28.979],
+      zoom: 11,
+      zoomControl: false
+    });
+
+    L.control.zoom({ position: "bottomright" }).addTo(mapRef.current);
+
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+    }).addTo(mapRef.current);
+
+    return () => {
+      mapRef.current?.remove();
+      mapRef.current = null;
+    };
+  }, []);
+
+  useEffect(() => {
+    const map = mapRef.current;
+
+    if (!map) {
+      return;
+    }
+
+    for (const marker of markersRef.current) {
+      marker.remove();
+    }
+
+    markersRef.current = shops.map((shop) => {
+      const marker = L.marker([shop.latitude, shop.longitude], {
+        title: shop.name
+      })
+        .addTo(map)
+        .bindPopup(`<strong>${escapeHtml(shop.name)}</strong><br>${escapeHtml(shop.district)}, ${escapeHtml(shop.city)}`);
+
+      marker.on("click", () => setSelectedShop(shop));
+      return marker;
+    });
+
+    if (shops.length > 0) {
+      const bounds = L.latLngBounds(shops.map((shop) => [shop.latitude, shop.longitude]));
+      map.fitBounds(bounds, { padding: [42, 42], maxZoom: 14 });
+    }
   }, [shops]);
+
+  useEffect(() => {
+    if (selectedShop && mapRef.current) {
+      mapRef.current.flyTo([selectedShop.latitude, selectedShop.longitude], Math.max(mapRef.current.getZoom(), 13), {
+        duration: 0.45
+      });
+    }
+  }, [selectedShop]);
 
   return (
     <div>
@@ -110,25 +165,7 @@ export function ShopsPage() {
         </aside>
 
         <section className="map-panel">
-          <div className="map-canvas" aria-label="Dukkan haritasi">
-            <div className="map-grid" />
-            {shops.map((shop) => {
-              const position = markerPositions.get(shop.id) ?? { left: 50, top: 50 };
-
-              return (
-                <button
-                  className={selectedShop?.id === shop.id ? "map-marker active" : "map-marker"}
-                  key={shop.id}
-                  style={{ left: `${position.left}%`, top: `${position.top}%` }}
-                  type="button"
-                  title={shop.name}
-                  onClick={() => setSelectedShop(shop)}
-                >
-                  <MapPin size={20} />
-                </button>
-              );
-            })}
-          </div>
+          <div className="map-canvas real-map" ref={mapElementRef} aria-label="Dukkan haritasi" />
 
           {selectedShop && (
             <article className="shop-detail-card">
@@ -159,28 +196,11 @@ export function ShopsPage() {
   );
 }
 
-function createMarkerPositions(shops: Shop[]) {
-  const positions = new Map<number, MarkerPosition>();
-
-  if (shops.length === 0) {
-    return positions;
-  }
-
-  const latitudes = shops.map((shop) => shop.latitude);
-  const longitudes = shops.map((shop) => shop.longitude);
-  const minLatitude = Math.min(...latitudes);
-  const maxLatitude = Math.max(...latitudes);
-  const minLongitude = Math.min(...longitudes);
-  const maxLongitude = Math.max(...longitudes);
-  const latitudeRange = maxLatitude - minLatitude || 1;
-  const longitudeRange = maxLongitude - minLongitude || 1;
-
-  for (const shop of shops) {
-    positions.set(shop.id, {
-      left: 8 + ((shop.longitude - minLongitude) / longitudeRange) * 84,
-      top: 92 - ((shop.latitude - minLatitude) / latitudeRange) * 84
-    });
-  }
-
-  return positions;
+function escapeHtml(value: string) {
+  return value
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
 }
