@@ -79,11 +79,11 @@ namespace BerberApp.Business.Services
             }
 
             var role = dto.Role.Trim();
-            var allowedRoles = new[] { "User", "Admin" };
+            var allowedRoles = new[] { "User", "Admin", "Barber", "ShopAdmin" };
 
             if (!allowedRoles.Contains(role))
             {
-                return ServiceResult<UserDto>.Fail("Rol sadece User veya Admin olabilir.");
+                return ServiceResult<UserDto>.Fail("Rol sadece User, Barber, ShopAdmin veya Admin olabilir.");
             }
 
             user.Role = role;

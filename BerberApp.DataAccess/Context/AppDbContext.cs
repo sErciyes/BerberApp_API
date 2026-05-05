@@ -15,6 +15,7 @@ namespace BerberApp.DataAccess.Context
 
         public DbSet<User> Users => Set<User>();
         public DbSet<Barber> Barbers => Set<Barber>();
+        public DbSet<Shop> Shops => Set<Shop>();
         public DbSet<Appointment> Appointments => Set<Appointment>();
         public DbSet<Conversation> Conversations => Set<Conversation>();
         public DbSet<ChatMessage> ChatMessages => Set<ChatMessage>();
@@ -79,6 +80,35 @@ namespace BerberApp.DataAccess.Context
                 entity.HasIndex(x => x.UserId)
                 .IsUnique()
                 .HasFilter("[UserId] IS NOT NULL");
+
+                entity.HasOne(x => x.Shop)
+                .WithMany(x => x.Barbers)
+                .HasForeignKey(x => x.ShopId)
+                .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            modelBuilder.Entity<Shop>(entity =>
+            {
+                entity.Property(x => x.Name)
+                .HasMaxLength(120)
+                .IsRequired();
+
+                entity.Property(x => x.Address)
+                .HasMaxLength(300)
+                .IsRequired();
+
+                entity.Property(x => x.City)
+                .HasMaxLength(80)
+                .IsRequired();
+
+                entity.Property(x => x.District)
+                .HasMaxLength(80)
+                .IsRequired();
+
+                entity.HasOne(x => x.OwnerUser)
+                .WithMany(x => x.OwnedShops)
+                .HasForeignKey(x => x.OwnerUserId)
+                .OnDelete(DeleteBehavior.Restrict);
             });
 
             modelBuilder.Entity<Appointment>(entity =>

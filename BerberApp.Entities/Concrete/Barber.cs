@@ -12,6 +12,8 @@ namespace BerberApp.Entities.Concrete
         public int Id { get; set; }
         public int? UserId { get; set; }
         public User? User { get; set; }
+        public int? ShopId { get; set; }
+        public Shop? Shop { get; set; }
         public string FullName { get; set; } = "";
         public string Specialty { get; set; } = "";
         [JsonIgnore]

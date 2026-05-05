@@ -34,6 +34,9 @@ namespace BerberApp.Entities.Concrete
         public Barber? BarberProfile { get; set; }
 
         [JsonIgnore]
+        public List<Shop> OwnedShops { get; set; } = new();
+
+        [JsonIgnore]
         public List<Conversation> Conversations { get; set; } = new();
 
         [JsonIgnore]

@@ -10,5 +10,7 @@ namespace BerberApp.Business.Dtos.BarberDtos
 
         [MaxLength(100, ErrorMessage = "Uzmanlik en fazla 100 karakter olabilir.")]
         public string Specialty { get; set; } = "";
+
+        public int? ShopId { get; set; }
     }
 }

@@ -60,6 +60,8 @@ API -> Business -> DataAccess -> Entities
 - Swagger uzerinden JWT authorize destegi
 - Berber CRUD
 - Berber hesabi ile kayit olma
+- Dukkan/Shop CRUD ve dukkana bagli berberler
+- Konuma gore yakindaki dukkanlari listeleme
 - SignalR ile kullanici-berber mesajlasma
 - Randevu CRUD
 - Randevu saat cakismasi kontrolu
@@ -226,6 +228,15 @@ Bu yapi production icin `ISmsService` uzerinden Twilio/Firebase gibi gercek bir 
 - `PUT /api/barbers/{id}` - Admin
 - `DELETE /api/barbers/{id}` - Admin
 
+### Shops
+
+- `GET /api/shops`
+- `GET /api/shops/nearby?latitude=41.015&longitude=28.979&radiusKm=10`
+- `GET /api/shops/{id}`
+- `POST /api/shops` - Admin, ShopAdmin
+- `PUT /api/shops/{id}` - Admin, ShopAdmin
+- `DELETE /api/shops/{id}` - Admin
+
 ### Appointments
 
 - `GET /api/appointments` - Admin
@@ -258,6 +269,7 @@ Kayit ekraninda iki hesap tipi bulunur:
 
 - `User`: Randevu alabilir ve berberlerle mesajlasabilir.
 - `Barber`: Kendisine bagli berber profilini temsil eder ve gelen mesajlari yanitlayabilir.
+- `ShopAdmin`: Kendisine bagli dukkanlari yonetebilir.
 
 Admin rolu sistem yonetimi icindir.
 

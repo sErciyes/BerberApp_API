@@ -41,26 +41,36 @@ namespace BerberApp.API.Controllers
         [HttpPost]
         public IActionResult Add(CreateBarberDto dto)
         {
-            var createdBarber = _barberService.Add(dto);
+            var result = _barberService.Add(dto);
+
+            if (!result.Success)
+            {
+                return BadRequest(ApiResponse<object>.Fail(result.Error ?? "Berber olusturulamadi."));
+            }
 
             return CreatedAtAction(
                 nameof(GetById),
-                new { id = createdBarber.Id },
-                ApiResponse<object>.Ok(createdBarber, "Berber olusturuldu."));
+                new { id = result.Data!.Id },
+                ApiResponse<object>.Ok(result.Data!, "Berber olusturuldu."));
         }
 
         [Authorize(Roles = "Admin")]
         [HttpPut("{id}")]
         public IActionResult Update(int id, UpdateBarberDto dto)
         {
-            var updatedBarber = _barberService.Update(id, dto);
+            var result = _barberService.Update(id, dto);
 
-            if (updatedBarber == null)
+            if (!result.Success)
             {
-                return NotFound(ApiResponse<object>.Fail("Berber bulunamadi."));
+                if (result.Error == "Berber bulunamadi.")
+                {
+                    return NotFound(ApiResponse<object>.Fail(result.Error));
+                }
+
+                return BadRequest(ApiResponse<object>.Fail(result.Error ?? "Berber guncellenemedi."));
             }
 
-            return Ok(ApiResponse<object>.Ok(updatedBarber, "Berber guncellendi."));
+            return Ok(ApiResponse<object>.Ok(result.Data!, "Berber guncellendi."));
         }
 
         [Authorize(Roles = "Admin")]
