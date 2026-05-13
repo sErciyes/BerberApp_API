@@ -12,12 +12,12 @@ export async function getUsers() {
   return response.data;
 }
 
-export async function updateProfile(payload: { fullName: string; email: string; phoneNumber: string }) {
+export async function updateProfile(payload: { fullName: string; email: string; phoneNumber: string; profileImageUrl: string }) {
   const response = await axiosClient.put<ApiResponse<User>>("/users/me", payload);
   return response.data;
 }
 
-export async function updateUserRole(id: number, role: "User" | "Admin") {
+export async function updateUserRole(id: number, role: "User" | "Admin" | "Barber" | "ShopAdmin") {
   const response = await axiosClient.patch<ApiResponse<User>>(`/users/${id}/role`, { role });
   return response.data;
 }

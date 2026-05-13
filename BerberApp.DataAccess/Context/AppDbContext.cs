@@ -37,6 +37,9 @@ namespace BerberApp.DataAccess.Context
                 entity.Property(x => x.PhoneNumber)
                 .HasMaxLength(20);
 
+                entity.Property(x => x.ProfileImageUrl)
+                .HasMaxLength(500);
+
                 entity.Property(x => x.PasswordHash).
                 IsRequired();
 
@@ -71,6 +74,9 @@ namespace BerberApp.DataAccess.Context
                 entity.Property(x => x.FullName).HasMaxLength(100).IsRequired();
 
                 entity.Property(x => x.Specialty).HasMaxLength(100);
+
+                entity.Property(x => x.ProfileImageUrl)
+                .HasMaxLength(500);
 
                 entity.HasOne(x => x.User)
                 .WithOne(x => x.BarberProfile)

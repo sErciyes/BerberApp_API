@@ -131,6 +131,7 @@ namespace BerberApp.Business.Services
                 FullName = user.FullName,
                 Email = user.Email,
                 PhoneNumber = user.PhoneNumber ?? "",
+                ProfileImageUrl = user.ProfileImageUrl ?? "",
                 Role = user.Role,
                 EmailConfirmed = user.EmailConfirmed,
                 PhoneNumberConfirmed = user.PhoneNumberConfirmed

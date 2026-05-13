@@ -9,10 +9,21 @@ services:
     environment:
       ASPNETCORE_ENVIRONMENT: Development
       ASPNETCORE_URLS: http://+:8080
-      ConnectionStrings__SqlConnection: Server=berberapp-sqlserver,1433;Database=BerberAppDb;User Id=sa;Password=Your_strong_password123!;TrustServerCertificate=True;
-      Jwt__Key: DockerDevelopmentSecretKey_ChangeThis_123456789
-      Jwt__Issuer: berberapi
-      Jwt__Audience: berberapi
+      ConnectionStrings__SqlConnection: Server=berberapp-sqlserver,1433;Database=BerberAppDb;User Id=sa;Password=${SA_PASSWORD};Encrypt=False;TrustServerCertificate=True;
+      Jwt__Key: ${JWT_KEY}
+      Jwt__Issuer: ${JWT_ISSUER}
+      Jwt__Audience: ${JWT_AUDIENCE}
+      Frontend__BaseUrl: ${FRONTEND_BASE_URL}
+      Email__UseSmtp: ${EMAIL_USE_SMTP}
+      Email__ShowDevelopmentTokens: ${EMAIL_SHOW_DEVELOPMENT_TOKENS}
+      Email__Smtp__Host: ${SMTP_HOST}
+      Email__Smtp__Port: ${SMTP_PORT}
+      Email__Smtp__EnableSsl: true
+      Email__Smtp__UserName: ${SMTP_USERNAME}
+      Email__Smtp__Password: ${SMTP_PASSWORD}
+      Email__Smtp__FromEmail: ${SMTP_FROM_EMAIL}
+      Email__Smtp__FromName: ${SMTP_FROM_NAME}
+      Sms__ShowDevelopmentCodes: ${SMS_SHOW_DEVELOPMENT_CODES}
     depends_on:
       - berberapp-sqlserver
 
@@ -23,9 +34,22 @@ services:
       - "1433:1433"
     environment:
       ACCEPT_EULA: "Y"
-      MSSQL_SA_PASSWORD: Your_strong_password123!
+      MSSQL_SA_PASSWORD: ${SA_PASSWORD}
     volumes:
       - berberapp-sqlserver-data:/var/opt/mssql
+
+  berberapp-ui:
+    build:
+      context: ./BerberApp.UI
+      dockerfile: Dockerfile
+      args:
+        VITE_API_BASE_URL: ${VITE_API_BASE_URL}
+        VITE_CHAT_HUB_URL: ${VITE_CHAT_HUB_URL}
+    container_name: berberapp-ui
+    ports:
+      - "4173:80"
+    depends_on:
+      - berberapp-api
 
 volumes:
   berberapp-sqlserver-data:

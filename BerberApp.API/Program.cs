@@ -8,6 +8,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using BerberApp.API.Hubs;
+using BerberApp.API.Data;
+using System.Collections.Generic;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,6 +19,7 @@ var jwtIssuer = builder.Configuration["Jwt:Issuer"]
     ?? throw new InvalidOperationException("Jwt:Issuer appsettings.json icinde bulunamadi.");
 var jwtAudience = builder.Configuration["Jwt:Audience"]
     ?? throw new InvalidOperationException("Jwt:Audience appsettings.json icinde bulunamadi.");
+var frontendBaseUrl = builder.Configuration["Frontend:BaseUrl"];
 
 var corsPolicyName = "BerberAppCors";
 
@@ -39,8 +42,21 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy(corsPolicyName, policy =>
     {
+        var allowedOrigins = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        {
+            "http://localhost:5173",
+            "https://localhost:5173",
+            "http://localhost:4173",
+            "https://localhost:4173"
+        };
+
+        if (!string.IsNullOrWhiteSpace(frontendBaseUrl))
+        {
+            allowedOrigins.Add(frontendBaseUrl.TrimEnd('/'));
+        }
+
         policy
-            .WithOrigins("http://localhost:5173", "https://localhost:5173")
+            .WithOrigins(allowedOrigins.ToArray())
             .AllowAnyHeader()
             .AllowAnyMethod()
             .AllowCredentials();
@@ -48,7 +64,9 @@ builder.Services.AddCors(options =>
 });
 builder.Services.AddSignalR();
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("SqlConnection")));
+    options.UseSqlServer(
+        builder.Configuration.GetConnectionString("SqlConnection"),
+        sqlOptions => sqlOptions.EnableRetryOnFailure()));
 builder.Services.AddScoped<IBarberService, BarberService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ISmsService, DevelopmentSmsService>();
@@ -148,6 +166,12 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 var app = builder.Build();
+
+var shouldSeedDemoData = app.Environment.IsDevelopment() || builder.Configuration.GetValue<bool>("Seed:Enabled");
+if (shouldSeedDemoData)
+{
+    await DemoDataSeeder.SeedAsync(app.Services);
+}
 
 app.UseMiddleware<ExceptionMiddleware>();
 

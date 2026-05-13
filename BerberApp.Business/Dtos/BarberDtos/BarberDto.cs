@@ -7,5 +7,6 @@ namespace BerberApp.Business.Dtos.BarberDtos
         public string ShopName { get; set; } = "";
         public string FullName { get; set; } = "";
         public string Specialty { get; set; } = "";
+        public string ProfileImageUrl { get; set; } = "";
     }
 }

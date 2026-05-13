@@ -1,0 +1,47 @@
+name: Deploy API to Azure App Service
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - 'BerberApp.API/**'
+      - 'BerberApp.Business/**'
+      - 'BerberApp.DataAccess/**'
+      - 'BerberApp.Entities/**'
+      - '.github/workflows/deploy-api-azure.yml'
+
+env:
+  AZURE_WEBAPP_NAME: ${{ vars.AZURE_API_WEBAPP_NAME }}
+  AZURE_WEBAPP_PACKAGE_PATH: ./publish
+  DOTNET_VERSION: '8.0.x'
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Restore
+        run: dotnet restore BerberApp.API/BerberApp.API.csproj
+
+      - name: Build
+        run: dotnet build BerberApp.API/BerberApp.API.csproj --configuration Release --no-restore
+
+      - name: Publish
+        run: dotnet publish BerberApp.API/BerberApp.API.csproj --configuration Release --no-build --output ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
+
+      - name: Deploy to Azure Web App
+        uses: azure/webapps-deploy@85270a1854658d167ab239bce43949edb336fa7c
+        with:
+          app-name: ${{ env.AZURE_WEBAPP_NAME }}
+          publish-profile: ${{ secrets.AZURE_API_WEBAPP_PUBLISH_PROFILE }}
+          package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}

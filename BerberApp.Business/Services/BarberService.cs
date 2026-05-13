@@ -28,7 +28,8 @@ namespace BerberApp.Business.Services
                     ShopId = barber.ShopId,
                     ShopName = barber.Shop == null ? "" : barber.Shop.Name,
                     FullName = barber.FullName,
-                    Specialty = barber.Specialty
+                    Specialty = barber.Specialty,
+                    ProfileImageUrl = barber.ProfileImageUrl ?? ""
                 })
                 .ToList();
         }
@@ -40,6 +41,24 @@ namespace BerberApp.Business.Services
 
             return barber == null ? null : MapToDto(barber);
         }
+
+        public List<BarberDto> GetByShopId(int shopId)
+        {
+            return _context.Barbers
+                .Where(x => x.ShopId == shopId)
+                .Include(x => x.Shop)
+                .Select(barber => new BarberDto
+                {
+                    Id = barber.Id,
+                    ShopId = barber.ShopId,
+                    ShopName = barber.Shop == null ? "" : barber.Shop.Name,
+                    FullName = barber.FullName,
+                    Specialty = barber.Specialty,
+                    ProfileImageUrl = barber.ProfileImageUrl ?? ""
+                })
+                .ToList();
+        }
+
         public ServiceResult<BarberDto> Add(CreateBarberDto dto)
         {
             if (!ShopExists(dto.ShopId))
@@ -51,7 +70,8 @@ namespace BerberApp.Business.Services
             {
                 FullName=dto.FullName,
                 Specialty=dto.Specialty,
-                ShopId = dto.ShopId
+                ShopId = dto.ShopId,
+                ProfileImageUrl = dto.ProfileImageUrl.Trim()
             };
 
             _context.Barbers.Add(barber);
@@ -76,6 +96,7 @@ namespace BerberApp.Business.Services
                 barber.FullName=dto.FullName;
                 barber.Specialty=dto.Specialty;
                 barber.ShopId=dto.ShopId;
+                barber.ProfileImageUrl = dto.ProfileImageUrl.Trim();
 
                 _context.SaveChanges();
                 return ServiceResult<BarberDto>.Ok(GetById(barber.Id)!);
@@ -104,7 +125,8 @@ namespace BerberApp.Business.Services
                 ShopId = barber.ShopId,
                 ShopName = barber.Shop?.Name ?? "",
                 FullName = barber.FullName,
-                Specialty = barber.Specialty
+                Specialty = barber.Specialty,
+                ProfileImageUrl = barber.ProfileImageUrl ?? ""
             };
         }
 

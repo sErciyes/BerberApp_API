@@ -63,6 +63,7 @@ namespace BerberApp.Business.Services
             user.FullName = dto.FullName.Trim();
             user.Email = email;
             user.PhoneNumber = phoneNumber;
+            user.ProfileImageUrl = dto.ProfileImageUrl.Trim();
 
             _context.SaveChanges();
 
@@ -100,6 +101,7 @@ namespace BerberApp.Business.Services
                 FullName = user.FullName,
                 Email = user.Email,
                 PhoneNumber = user.PhoneNumber ?? "",
+                ProfileImageUrl = user.ProfileImageUrl ?? "",
                 Role = user.Role,
                 EmailConfirmed = user.EmailConfirmed,
                 PhoneNumberConfirmed = user.PhoneNumberConfirmed

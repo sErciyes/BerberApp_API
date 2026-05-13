@@ -1,10 +1,22 @@
 # BerberApp API
 
-BerberApp API, berber randevularini yonetmek icin gelistirilmis katmanli mimariye sahip bir ASP.NET Core Web API projesidir. Proje junior backend developer seviyesinde, okunabilir ve gelistirilebilir bir referans proje olarak hazirlanmistir.
+BerberApp API, berber randevularini yonetmek icin gelistirilmis katmanli mimariye sahip bir ASP.NET Core Web API ve React panel projesidir. Proje junior backend developer seviyesinde, okunabilir ve gelistirilebilir bir referans proje olarak hazirlanmistir.
 
 ## Proje Ozeti
 
-Bu API ile kullanicilar kayit olabilir, giris yapabilir, berberleri listeleyebilir, randevu olusturabilir ve berberlerle mesajlasabilir. Berber hesaplari kendilerine gelen mesajlari takip edebilir. Admin rolundeki kullanicilar berber CRUD islemlerini, kullanici rol yonetimini, mesajlari ve randevu durum guncellemelerini yonetebilir.
+Bu proje ile kullanicilar kayit olabilir, giris yapabilir, berberleri ve dukkanlari listeleyebilir, harita uzerinden yakin dukkanlari gorebilir, randevu olusturabilir ve berberlerle gercek zamanli mesajlasabilir. Berber hesaplari kendilerine gelen mesajlari ve kendi randevu akisini takip edebilir. Admin rolundeki kullanicilar berber CRUD islemlerini, kullanici rol yonetimini, mesajlari ve randevu durum guncellemelerini yonetebilir.
+
+## One Cikan Noktalar
+
+- Katmanli mimari: `API -> Business -> DataAccess -> Entities`
+- JWT authentication ve role-based authorization
+- Email/telefon dogrulama akislari
+- SignalR ile gercek zamanli mesajlasma
+- Harita tabanli dukkan kesfi ve yakin dukkan endpointi
+- 30 dakikalik slot mantigi ile modern randevu olusturma ekrani
+- Aktif randevusu olan kullanicinin yeni randevu alamamasi gibi business rule'lar
+- Berberler icin bugunku randevulari saat saat gorebilecekleri takvim akisi
+- Kullanici ve berber profilleri icin URL bazli fotograf destegi
 
 ## Ekran Goruntuleri
 
@@ -64,16 +76,32 @@ API -> Business -> DataAccess -> Entities
 - Konuma gore yakindaki dukkanlari listeleme
 - SignalR ile kullanici-berber mesajlasma
 - Randevu CRUD
+- Musait slot endpointi (`GET /api/appointments/available-slots`)
 - Randevu saat cakismasi kontrolu
 - Randevu kurallari:
   - Gecmis tarihe randevu alinamaz
+  - Bugun icin gecmis saate randevu alinamaz
   - Randevu saatleri 09:00-18:00 arasindadir
   - Son slot 17:30'dur
   - Sadece `00` ve `30` dakikalari kabul edilir
+  - Aktif (`Pending` veya `Approved`) randevusu olan kullanici yeni randevu alamaz
   - Kullanici sadece kendi `Pending` randevusunu silebilir
+- Randevu olusturuldugunda kullaniciya ve berbere HTML ozet maili gonderimi
 - Standart API response modeli
 - Global exception middleware
 - DTO validation
+
+## Ogrenilen Konular
+
+Bu proje sadece CRUD endpointlerinden ibaret degildir. Gelistirme surecinde su alanlarda pratik yapilmis oldu:
+
+- Authentication/authorization tasarimi
+- Katmanli mimaride service sorumluluklari
+- Validation ve business rule ayrimi
+- SignalR ile gerçek zamanli iletisim
+- Harita ve konum tabanli listeleme
+- Mail ve dogrulama akislari
+- Backend kurallarini destekleyen frontend UX tasarimi
 
 ## Kurulum
 
@@ -86,12 +114,14 @@ cd BerberApp.API
 
 2. `BerberApp.API/appsettings.Example.json` dosyasini referans alarak `BerberApp.API/appsettings.Development.json` dosyasini olusturun.
 
+Local development icin gercek secret'lari dosyaya yazmak yerine `dotnet user-secrets` kullanmaniz onerilir.
+
 Ornek:
 
 ```json
 {
   "ConnectionStrings": {
-    "SqlConnection": "Server=localhost;Database=BerberAppDb;User Id=sa;Password=YOUR_PASSWORD;TrustServerCertificate=True;"
+    "SqlConnection": "Server=localhost;Database=BerberAppDb;User Id=sa;Password=YOUR_PASSWORD;Encrypt=False;TrustServerCertificate=True;"
   },
   "Jwt": {
     "Key": "CHANGE_ME_TO_A_LONG_SECRET_KEY_AT_LEAST_32_CHARS",
@@ -116,6 +146,18 @@ Ornek:
   }
 }
 ```
+
+Ornek `user-secrets` komutlari:
+
+```bash
+dotnet user-secrets --project BerberApp.API set "ConnectionStrings:SqlConnection" "Server=localhost;Database=BerberAppDb;User Id=sa;Password=YOUR_PASSWORD;Encrypt=False;TrustServerCertificate=True;"
+dotnet user-secrets --project BerberApp.API set "Jwt:Key" "CHANGE_ME_TO_A_LONG_SECRET_KEY_AT_LEAST_32_CHARS"
+dotnet user-secrets --project BerberApp.API set "Email:Smtp:UserName" "YOUR_EMAIL@gmail.com"
+dotnet user-secrets --project BerberApp.API set "Email:Smtp:Password" "YOUR_APP_PASSWORD"
+dotnet user-secrets --project BerberApp.API set "Email:Smtp:FromEmail" "YOUR_EMAIL@gmail.com"
+```
+
+Bu yontemde `appsettings.Development.json` icinde placeholder degerler kalir, gercek secret'lar ise sadece makinenizde saklanir.
 
 3. Migrationlari veritabanina uygulayin.
 
@@ -161,8 +203,11 @@ Swagger `Bearer` kismini otomatik ekler.
     "userId": 1,
     "fullName": "Serdar Test",
     "email": "serdar@example.com",
+    "phoneNumber": "05551234567",
+    "profileImageUrl": "https://example.com/avatar.jpg",
     "role": "User",
-    "emailConfirmed": true
+    "emailConfirmed": true,
+    "phoneNumberConfirmed": true
   },
   "errors": null
 }
@@ -187,7 +232,7 @@ Swagger `Bearer` kismini otomatik ekler.
 
 Development ortaminda `Email:UseSmtp` false ise mail icerigi console'a yazilir ve test kolayligi icin token response icindeki `developmentToken` alaninda doner.
 
-Gercek mail gonderimi icin `appsettings.Development.json` veya environment variable uzerinden SMTP bilgilerini girin:
+Gercek mail gonderimi icin `dotnet user-secrets`, `appsettings.Development.json` veya environment variable uzerinden SMTP bilgilerini girin:
 
 ```json
 "Email": {
@@ -216,6 +261,7 @@ Bu yapi production icin `ISmsService` uzerinden Twilio/Firebase gibi gercek bir 
 ### Users
 
 - `GET /api/users/me`
+- `PUT /api/users/me`
 - `GET /api/users` - Admin
 - `GET /api/users/{id}` - Admin
 - `PATCH /api/users/{id}/role` - Admin
@@ -241,6 +287,7 @@ Bu yapi production icin `ISmsService` uzerinden Twilio/Firebase gibi gercek bir 
 
 - `GET /api/appointments` - Admin
 - `GET /api/appointments/my`
+- `GET /api/appointments/available-slots?barberId=1&date=2026-05-15`
 - `GET /api/appointments/{id}`
 - `POST /api/appointments`
 - `PATCH /api/appointments/{id}/status` - Admin
@@ -328,20 +375,31 @@ Hatali response:
 ## Notlar
 
 - `appsettings.Development.json` dosyasi `.gitignore` icindedir ve GitHub'a yuklenmemelidir.
+- Local secret'lar icin en temiz yol `dotnet user-secrets`, Docker icin ise `.env` kullanmaktir.
 - JWT key ve SQL Server sifresi gibi hassas bilgiler repoya eklenmemelidir.
 - Bu proje bilincli olarak sade tutulmustur. Repository pattern, Unit of Work gibi yapilar ileride eklenebilir; ancak mevcut hali junior seviyede daha kolay okunur ve anlatilir durumdadir.
+- Paylasim icin hazir ozet metin ve ekran goruntusu listesi icin `docs/LINKEDIN_POST.md` ve `docs/SCREENSHOT_CHECKLIST.md` dosyalarina bakabilirsiniz.
 
 ## Docker ile Calistirma
 
-Projede API ve SQL Server icin basit bir Docker Compose yapisi bulunur.
+Projede API, React UI ve SQL Server icin Docker Compose yapisi bulunur.
+
+1. `.env.example` dosyasini kopyalayip `.env` olusturun.
+
+```bash
+cp .env.example .env
+```
+
+Windows kullaniyorsaniz ayni icerigi `.env` adli dosyaya kopyalayabilirsiniz.
 
 ```bash
 docker compose up -d
 ```
 
-Bu komut iki container baslatir:
+Bu komut uc container baslatir:
 
 - `berberapp-api`
+- `berberapp-ui`
 - `berberapp-sqlserver`
 
 API adresi:
@@ -350,12 +408,18 @@ API adresi:
 http://localhost:5159/swagger
 ```
 
+UI adresi:
+
+```text
+http://localhost:4173
+```
+
 Ilk calistirmada SQL Server container'inin tamamen hazir hale gelmesi biraz zaman alabilir. Veritabani semasini olusturmak icin migration uygulanmalidir.
 
 Docker SQL Server'a migration uygulamak icin:
 
 ```bash
-dotnet ef database update --project BerberApp.DataAccess --startup-project BerberApp.API --connection "Server=localhost,1433;Database=BerberAppDb;User Id=sa;Password=Your_strong_password123!;TrustServerCertificate=True;"
+dotnet ef database update --project BerberApp.DataAccess --startup-project BerberApp.API --connection "Server=localhost,1433;Database=BerberAppDb;User Id=sa;Password=Your_strong_password123!;Encrypt=False;TrustServerCertificate=True;"
 ```
 
 Containerlari durdurmak icin:
@@ -370,7 +434,9 @@ Veritabani volume'unu da silmek isterseniz:
 docker compose down -v
 ```
 
-Not: `docker-compose.yml` icindeki sifre ve JWT key sadece lokal gelistirme icindir. Gercek ortamda secret/environment variable yonetimi kullanilmalidir.
+Not: `docker-compose.yml` icindeki degerler `.env` uzerinden okunur. Gercek ortamda secret/environment variable yonetimi kullanilmalidir.
+
+Ek not: API tarafinda CORS, Vite gelistirme portu `5173` ve Docker UI portu `4173` icin hazirdir. `.env` icindeki `FRONTEND_BASE_URL` degeri de izinli origin listesine otomatik olarak eklenir.
 
 ## Frontend Plani
 

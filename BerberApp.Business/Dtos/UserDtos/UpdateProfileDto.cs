@@ -16,5 +16,8 @@ namespace BerberApp.Business.Dtos.UserDtos
         [Required(ErrorMessage = "Telefon numarasi zorunludur.")]
         [MaxLength(20, ErrorMessage = "Telefon numarasi en fazla 20 karakter olabilir.")]
         public string PhoneNumber { get; set; } = "";
+
+        [MaxLength(500, ErrorMessage = "Profil fotografi linki en fazla 500 karakter olabilir.")]
+        public string ProfileImageUrl { get; set; } = "";
     }
 }

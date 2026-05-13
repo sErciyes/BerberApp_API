@@ -14,6 +14,14 @@ export function Layout() {
     navigate("/login");
   }
 
+  function renderUserAvatar() {
+    if (auth?.profileImageUrl) {
+      return <img className="topbar-avatar-image" src={auth.profileImageUrl} alt={auth.fullName} />;
+    }
+
+    return <UserRound size={18} />;
+  }
+
   return (
     <div className="app-shell">
       <aside className="sidebar">
@@ -36,12 +44,10 @@ export function Layout() {
           </NavLink>
           {auth && (
             <>
-              {!isBarber && (
-                <NavLink to="/appointments/my">
-                  <CalendarCheck size={18} />
-                  Randevularim
-                </NavLink>
-              )}
+              <NavLink to="/appointments/my">
+                <CalendarCheck size={18} />
+                Randevularim
+              </NavLink>
               <NavLink to="/messages">
                 <MessageCircle size={18} />
                 Mesajlar
@@ -81,6 +87,9 @@ export function Layout() {
           </div>
           {auth ? (
             <div className="user-chip">
+              <div className="topbar-avatar">
+                {renderUserAvatar()}
+              </div>
               <span>{auth.fullName}</span>
               <small>{auth.role}</small>
               <Button variant="ghost" onClick={toggleTheme} title={theme === "dark" ? "Aydinlik mod" : "Karanlik mod"}>

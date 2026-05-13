@@ -11,6 +11,7 @@ namespace BerberApp.Business.Services
     public interface IBarberService
     {
         List<BarberDto> GetAll();
+        List<BarberDto> GetByShopId(int shopId);
         BarberDto? GetById(int id);
         ServiceResult<BarberDto> Add(CreateBarberDto dto);
         ServiceResult<BarberDto> Update(int id,UpdateBarberDto dto);

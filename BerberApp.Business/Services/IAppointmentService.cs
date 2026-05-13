@@ -7,6 +7,8 @@ namespace BerberApp.Business.Services
     {
         List<AppointmentDto> GetAll();
         List<AppointmentDto> GetByUserId(int userId);
+        List<AppointmentDto> GetByBarberUserId(int userId);
+        List<string> GetAvailableSlots(int barberId, DateTime date);
         AppointmentDto? GetById(int id, int userId, bool isAdmin);
         ServiceResult<AppointmentDto> Create(int userId, CreateAppointmentDto dto);
         ServiceResult<AppointmentDto> UpdateStatus(int id, UpdateAppointmentStatusDto dto);

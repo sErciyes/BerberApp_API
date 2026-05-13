@@ -18,6 +18,7 @@ export function ProfilePage() {
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
+  const [profileImageUrl, setProfileImageUrl] = useState("");
   const [phoneCode, setPhoneCode] = useState("");
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -50,6 +51,7 @@ export function ProfilePage() {
         setFullName(response.data.fullName);
         setEmail(response.data.email);
         setPhoneNumber(response.data.phoneNumber ?? "");
+        setProfileImageUrl(response.data.profileImageUrl ?? "");
       })
       .catch((err) => setError(getErrorMessage(err)));
   }, []);
@@ -64,7 +66,8 @@ export function ProfilePage() {
       const response = await updateProfile({
         fullName: fullName.trim(),
         email: email.trim(),
-        phoneNumber: phoneNumber.trim()
+        phoneNumber: phoneNumber.trim(),
+        profileImageUrl: profileImageUrl.trim()
       });
 
       if (!response.data) {
@@ -76,7 +79,8 @@ export function ProfilePage() {
       updateAuth({
         fullName: response.data.fullName,
         email: response.data.email,
-        phoneNumber: response.data.phoneNumber
+        phoneNumber: response.data.phoneNumber,
+        profileImageUrl: response.data.profileImageUrl
       });
       setSuccess(response.message ?? "Profil guncellendi.");
     } catch (err) {
@@ -167,7 +171,7 @@ export function ProfilePage() {
     <div className="center-page">
       <div className="account-hero">
         <div className="account-avatar">
-          <UserRound size={26} />
+          {profileImageUrl ? <img className="account-avatar-image" src={profileImageUrl} alt={fullName || "Profil"} /> : <UserRound size={26} />}
         </div>
         <div>
           <span className="muted">Hesap merkezi</span>
@@ -222,6 +226,7 @@ export function ProfilePage() {
                 <FormField label="Ad Soyad" name="fullName" value={fullName} maxLength={50} onChange={(event) => setFullName(event.target.value)} required />
                 <FormField label="Email" name="email" type="email" value={email} maxLength={150} onChange={(event) => setEmail(event.target.value)} required />
                 <FormField label="Telefon" name="phoneNumber" value={phoneNumber} maxLength={20} placeholder="05xx xxx xx xx" onChange={(event) => setPhoneNumber(event.target.value)} required />
+                <FormField label="Profil Fotografi URL" name="profileImageUrl" type="url" value={profileImageUrl} maxLength={500} placeholder="https://..." onChange={(event) => setProfileImageUrl(event.target.value)} />
                 <Button type="submit" disabled={isSaving}>
                   {isSaving ? "Kaydediliyor..." : "Profili Guncelle"}
                 </Button>
@@ -231,6 +236,7 @@ export function ProfilePage() {
                 <div><span>Ad Soyad</span><strong>{user.fullName}</strong></div>
                 <div><span>Email</span><strong>{user.email}</strong></div>
                 <div><span>Telefon</span><strong>{user.phoneNumber || "-"}</strong></div>
+                <div><span>Fotograf</span><strong>{user.profileImageUrl ? "Var" : "-"}</strong></div>
                 <div><span>Rol</span><strong>{user.role}</strong></div>
               </div>
             </div>

@@ -3,7 +3,8 @@ export type User = {
   fullName: string;
   email: string;
   phoneNumber: string;
-  role: "User" | "Admin";
+  profileImageUrl: string;
+  role: "User" | "Admin" | "Barber" | "ShopAdmin";
   emailConfirmed: boolean;
   phoneNumberConfirmed: boolean;
 };

@@ -37,6 +37,14 @@ namespace BerberApp.API.Controllers
             return Ok(ApiResponse<object>.Ok(barber));
         }
 
+        [HttpGet("/api/shops/{shopId}/barbers")]
+        public IActionResult GetByShopId(int shopId)
+        {
+            var barbers = _barberService.GetByShopId(shopId);
+
+            return Ok(ApiResponse<object>.Ok(barbers));
+        }
+
         [Authorize(Roles = "Admin")]
         [HttpPost]
         public IActionResult Add(CreateBarberDto dto)

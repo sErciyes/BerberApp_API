@@ -18,7 +18,8 @@ export type LoginResponse = {
   fullName: string;
   email: string;
   phoneNumber: string;
-  role: "User" | "Admin" | "Barber";
+  profileImageUrl: string;
+  role: "User" | "Admin" | "Barber" | "ShopAdmin";
   emailConfirmed: boolean;
   phoneNumberConfirmed: boolean;
 };

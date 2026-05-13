@@ -7,11 +7,11 @@ import { getErrorMessage } from "../api/axiosClient";
 import { Button } from "../components/Button";
 import { Notice } from "../components/Notice";
 import { useAuth } from "../context/AuthContext";
-import { getToken } from "../utils/tokenStorage";
+import { getToken, isTokenExpired } from "../utils/tokenStorage";
 import type { ChatMessage, Conversation } from "../types/chat";
 
 export function MessagesPage() {
-  const { isAdmin, isBarber } = useAuth();
+  const { isAdmin, isBarber, signOut } = useAuth();
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [selectedConversation, setSelectedConversation] = useState<Conversation | null>(null);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -20,6 +20,7 @@ export function MessagesPage() {
   const [loading, setLoading] = useState(true);
   const [hubReady, setHubReady] = useState(false);
   const connectionRef = useRef<HubConnection | null>(null);
+  const selectedConversationRef = useRef<Conversation | null>(null);
 
   const title = isAdmin ? "Admin Mesajlari" : isBarber ? "Berber Mesajlari" : "Mesajlar";
   const selectedTitle = selectedConversation
@@ -31,9 +32,14 @@ export function MessagesPage() {
     : "Konusma sec";
 
   useEffect(() => {
+    selectedConversationRef.current = selectedConversation;
+  }, [selectedConversation]);
+
+  useEffect(() => {
     getConversations()
       .then((response) => {
         const items = response.data ?? [];
+        setError("");
         setConversations(items);
         setSelectedConversation(items[0] ?? null);
       })
@@ -47,8 +53,17 @@ export function MessagesPage() {
       return;
     }
 
+    setConversations((current) =>
+      current.map((conversation) =>
+        conversation.id === selectedConversation.id
+          ? { ...conversation, unreadCount: 0 }
+          : conversation
+      )
+    );
+
     getMessages(selectedConversation.id)
       .then((response) => {
+        setError("");
         setMessages(response.data ?? []);
         return markConversationAsRead(selectedConversation.id);
       })
@@ -56,26 +71,50 @@ export function MessagesPage() {
   }, [selectedConversation]);
 
   function addMessage(message: ChatMessage) {
-    setMessages((current) => {
-      if (current.some((item) => item.id === message.id)) {
-        return current;
-      }
+    const activeConversationId = selectedConversationRef.current?.id;
 
-      return [...current, message];
-    });
+    if (activeConversationId === message.conversationId) {
+      setMessages((current) => {
+        if (current.some((item) => item.id === message.id)) {
+          return current;
+        }
+
+        return [...current, message];
+      });
+    }
 
     setConversations((current) =>
-      current.map((conversation) =>
-        conversation.id === message.conversationId
-          ? { ...conversation, lastMessage: message.content, lastMessageAt: message.createdAt }
-          : conversation
-      )
+      current.map((conversation) => {
+        if (conversation.id !== message.conversationId) {
+          return conversation;
+        }
+
+        const unreadCount =
+          activeConversationId === message.conversationId || message.isMine
+            ? 0
+            : conversation.unreadCount + 1;
+
+        return {
+          ...conversation,
+          lastMessage: message.content,
+          lastMessageAt: message.createdAt,
+          unreadCount
+        };
+      })
     );
   }
 
   useEffect(() => {
-    if (!getToken()) {
+    const token = getToken();
+
+    if (!token) {
       setError("Mesajlasma icin once giris yapmalisin.");
+      return;
+    }
+
+    if (isTokenExpired(token)) {
+      signOut();
+      setError("Oturum suresi dolmus. Lutfen tekrar giris yap.");
       return;
     }
 
@@ -83,12 +122,29 @@ export function MessagesPage() {
     connectionRef.current = connection;
 
     connection.on("ReceiveMessage", (message: ChatMessage) => {
+      setError("");
       addMessage(message);
+    });
+
+    connection.onreconnected(() => {
+      const activeConversationId = selectedConversationRef.current?.id;
+
+      if (!activeConversationId) {
+        return Promise.resolve();
+      }
+
+      return connection
+        .invoke("JoinConversation", activeConversationId)
+        .then(() => setError(""))
+        .catch(() => setError("Konusma odasina baglanilamadi."));
     });
 
     connection
       .start()
-      .then(() => setHubReady(true))
+      .then(() => {
+        setError("");
+        setHubReady(true);
+      })
       .catch(() => setError("SignalR baglantisi kurulamadi. Oturum suresi dolduysa tekrar giris yap."));
 
     return () => {
@@ -104,10 +160,13 @@ export function MessagesPage() {
       return;
     }
 
-    const join = () => connection.invoke("JoinConversation", selectedConversation.id).catch(() => setError("Konusma odasina baglanilamadi."));
+    const join = () =>
+      connection
+        .invoke("JoinConversation", selectedConversation.id)
+        .then(() => setError(""))
+        .catch(() => setError("Konusma odasina baglanilamadi."));
 
     join();
-    connection.onreconnected(join);
   }, [selectedConversation, hubReady]);
 
   async function handleSend(event: React.FormEvent<HTMLFormElement>) {
@@ -121,6 +180,7 @@ export function MessagesPage() {
       const sentMessage = await connectionRef.current?.invoke<ChatMessage>("SendMessage", selectedConversation.id, content.trim());
 
       if (sentMessage) {
+        setError("");
         addMessage(sentMessage);
       }
 
@@ -143,7 +203,11 @@ export function MessagesPage() {
         </div>
       </div>
 
-      {error && <Notice type="error">{error}</Notice>}
+      {error && (
+        <Notice type="error" onClose={() => setError("")}>
+          {error}
+        </Notice>
+      )}
       {loading && <Notice>Konusmalar yukleniyor.</Notice>}
 
       <div className="chat-shell">
@@ -154,19 +218,27 @@ export function MessagesPage() {
               <span>Henuz konusma yok.</span>
             </div>
           )}
-          {sortedConversations.map((conversation) => (
-            <button
-              className={selectedConversation?.id === conversation.id ? "conversation-item active" : "conversation-item"}
-              key={conversation.id}
-              type="button"
-              onClick={() => setSelectedConversation(conversation)}
-            >
-              <strong>{isAdmin || isBarber ? conversation.userFullName : conversation.barberFullName}</strong>
-              <span>{conversation.barberFullName} - {conversation.barberSpecialty || "Genel hizmet"}</span>
-              <small>{conversation.lastMessage || "Konusma baslatildi"}</small>
-              {conversation.unreadCount > 0 && <em>{conversation.unreadCount}</em>}
-            </button>
-          ))}
+          {sortedConversations.map((conversation) => {
+            const secondaryLabel = isAdmin
+              ? `${conversation.barberFullName} - ${conversation.barberSpecialty || "Genel hizmet"}`
+              : isBarber
+                ? conversation.barberSpecialty || "Genel hizmet"
+                : `${conversation.barberFullName} - ${conversation.barberSpecialty || "Genel hizmet"}`;
+
+            return (
+              <button
+                className={selectedConversation?.id === conversation.id ? "conversation-item active" : "conversation-item"}
+                key={conversation.id}
+                type="button"
+                onClick={() => setSelectedConversation(conversation)}
+              >
+                <strong>{isAdmin || isBarber ? conversation.userFullName : conversation.barberFullName}</strong>
+                <span>{secondaryLabel}</span>
+                <small>{conversation.lastMessage || "Konusma baslatildi"}</small>
+                {conversation.unreadCount > 0 && <em>{conversation.unreadCount}</em>}
+              </button>
+            );
+          })}
         </aside>
 
         <section className="chat-panel">

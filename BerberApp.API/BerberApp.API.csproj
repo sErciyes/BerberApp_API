@@ -4,6 +4,7 @@
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>BerberApp.API-6f2cbe6c-3b3d-4f93-8fb5-4f30db30a1d8</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>

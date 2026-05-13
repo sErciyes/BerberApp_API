@@ -223,6 +223,26 @@ select {
   background: var(--surface-2);
 }
 
+.topbar-avatar {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  overflow: hidden;
+  border: 1px solid var(--accent-border);
+  border-radius: 999px;
+  background: var(--accent-soft);
+  color: var(--accent-strong);
+}
+
+.topbar-avatar-image,
+.account-avatar-image,
+.barber-avatar-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
 .user-chip span {
   color: var(--text);
   font-weight: 800;
@@ -334,6 +354,7 @@ select {
   border-radius: 8px;
   background: var(--accent-soft);
   color: var(--accent-strong);
+  overflow: hidden;
 }
 
 .account-hero h1 {
@@ -379,6 +400,257 @@ select {
 .summary-card strong {
   color: var(--text);
   font-size: 24px;
+}
+
+.booking-shell {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(280px, 0.8fr);
+  gap: 16px;
+  align-items: start;
+}
+
+.booking-main,
+.booking-preview {
+  display: grid;
+  gap: 16px;
+  padding: 18px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+
+.booking-section {
+  display: grid;
+  gap: 14px;
+}
+
+.booking-barber-list {
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+
+.booking-barber-list button,
+.booking-date-card {
+  display: grid;
+  gap: 4px;
+  min-height: 94px;
+  padding: 16px;
+  text-align: left;
+}
+
+.booking-barber-list button {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--surface-2) 84%, transparent), var(--surface));
+  transition: border-color 140ms ease, transform 140ms ease, background 140ms ease, box-shadow 140ms ease;
+}
+
+.booking-barber-list button span,
+.booking-date-card strong {
+  color: var(--text);
+  font-size: 15px;
+  font-weight: 900;
+}
+
+.booking-barber-list button small,
+.booking-date-card span {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.booking-barber-list button:hover {
+  transform: translateY(-1px);
+  border-color: color-mix(in srgb, var(--accent) 26%, var(--border));
+  background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 10%, transparent), var(--surface));
+}
+
+.booking-barber-list button.active,
+.segmented-control.booking-barber-list button.active {
+  border-color: color-mix(in srgb, var(--accent) 42%, var(--border));
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--accent) 14%, transparent), color-mix(in srgb, var(--accent) 20%, var(--surface)));
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, var(--accent) 28%, transparent);
+}
+
+.booking-barber-list button.active span,
+.booking-barber-list button.active small,
+.segmented-control.booking-barber-list button.active span,
+.segmented-control.booking-barber-list button.active small {
+  color: var(--text);
+}
+
+.booking-barber-list button.active .booking-barber-avatar,
+.segmented-control.booking-barber-list button.active .booking-barber-avatar {
+  border-color: color-mix(in srgb, var(--accent) 40%, var(--border));
+  background: color-mix(in srgb, var(--accent) 18%, var(--surface));
+  color: var(--text);
+}
+
+.booking-barber-card-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.booking-barber-avatar {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  flex: 0 0 auto;
+  border: 1px solid color-mix(in srgb, var(--accent) 28%, var(--border));
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--accent) 14%, var(--surface));
+  color: var(--accent-strong);
+  font-size: 15px;
+  font-weight: 900;
+}
+
+.booking-barber-text {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+.booking-barber-text span,
+.booking-barber-text small {
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.booking-date-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(92px, 1fr));
+  gap: 10px;
+}
+
+.booking-date-card {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface-2);
+  cursor: pointer;
+}
+
+.booking-date-card.active,
+.booking-date-card:hover,
+.booking-slot.active,
+.booking-slot:hover {
+  border-color: var(--accent-border);
+  background: var(--accent-soft);
+}
+
+.booking-date-input {
+  max-width: 220px;
+}
+
+.booking-shop-field {
+  max-width: 360px;
+}
+
+.booking-slot-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(112px, 1fr));
+  gap: 10px;
+}
+
+.booking-slot {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 46px;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface-2);
+  color: var(--text);
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.booking-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.booking-sidebar {
+  position: sticky;
+  top: 18px;
+}
+
+.booking-preview .detail-list strong {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.booking-success-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10020;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(2, 6, 23, 0.72);
+}
+
+.booking-success-card {
+  display: grid;
+  gap: 14px;
+  width: min(100%, 420px);
+  padding: 28px 24px;
+  border: 1px solid var(--accent-border);
+  border-radius: 10px;
+  background: var(--surface);
+  box-shadow: var(--shadow);
+  text-align: center;
+}
+
+.booking-success-card svg {
+  margin: 0 auto;
+  color: var(--accent);
+}
+
+.booking-progress-card svg {
+  animation: bookingPulse 1.2s ease-in-out infinite;
+}
+
+.booking-success-card h2 {
+  margin: 0;
+  color: var(--text);
+  font-size: 28px;
+}
+
+.booking-success-card p {
+  margin: 0;
+  color: var(--muted-strong);
+  line-height: 1.7;
+}
+
+.booking-success-actions {
+  display: flex;
+  justify-content: center;
+}
+
+@keyframes bookingPulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.9;
+  }
+
+  50% {
+    transform: scale(1.08);
+    opacity: 1;
+  }
 }
 
 .account-tabs {
@@ -488,7 +760,9 @@ select {
 .chat-shell {
   display: grid;
   grid-template-columns: 320px minmax(0, 1fr);
-  min-height: 640px;
+  height: calc(100vh - 240px);
+  min-height: 520px;
+  max-height: 680px;
   overflow: hidden;
   border: 1px solid var(--border);
   border-radius: 8px;
@@ -717,12 +991,38 @@ select option {
 }
 
 .notice {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
   margin: 0 0 14px;
   padding: 12px 14px;
   border: 1px solid var(--border-strong);
   border-radius: 8px;
   background: var(--surface-3);
   color: var(--muted-strong);
+}
+
+.notice-content {
+  min-width: 0;
+}
+
+.notice-close {
+  flex: 0 0 auto;
+  min-width: 28px;
+  min-height: 28px;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: inherit;
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.notice-close:hover {
+  background: color-mix(in srgb, currentColor 12%, transparent);
 }
 
 .notice-success {
@@ -779,6 +1079,165 @@ select option {
   margin-top: 6px;
   color: var(--muted-strong);
   font-size: 13px;
+}
+
+.barber-browser-shell {
+  display: grid;
+  gap: 16px;
+}
+
+.barber-browser-header {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+
+.barber-shop-filter {
+  min-width: min(100%, 320px);
+}
+
+.barber-shop-hero {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 20px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background:
+    linear-gradient(140deg, color-mix(in srgb, var(--accent) 9%, transparent), transparent 52%),
+    var(--surface);
+  box-shadow: var(--shadow);
+}
+
+.barber-shop-hero h2 {
+  margin: 6px 0 4px;
+  color: var(--text);
+  font-size: 28px;
+}
+
+.barber-shop-hero p {
+  margin: 0;
+  color: var(--muted);
+}
+
+.barber-shop-meta {
+  display: grid;
+  gap: 8px;
+  color: var(--muted-strong);
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.barber-shop-meta span {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.barber-card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 18px;
+}
+
+.barber-showcase-card {
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+
+.barber-cover {
+  height: 108px;
+  background-size: cover;
+  background-position: center;
+}
+
+.barber-avatar-stack {
+  display: flex;
+  align-items: end;
+  gap: 14px;
+  padding: 0 18px;
+  margin-top: -28px;
+}
+
+.barber-avatar {
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  border: 4px solid var(--surface);
+  background: color-mix(in srgb, var(--surface-2) 82%, white 18%);
+  color: var(--text);
+  font-weight: 900;
+  overflow: hidden;
+}
+
+.barber-avatar-large {
+  width: 62px;
+  height: 62px;
+  font-size: 20px;
+}
+
+.barber-avatar-stack strong,
+.barber-avatar-stack span {
+  display: block;
+}
+
+.barber-avatar-stack strong {
+  color: var(--text);
+  font-size: 24px;
+  line-height: 1.05;
+}
+
+.barber-avatar-stack span {
+  margin-top: 4px;
+  color: var(--muted);
+}
+
+.barber-showcase-body {
+  display: grid;
+  gap: 14px;
+  padding: 18px;
+}
+
+.barber-pill-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.barber-showcase-copy p {
+  margin: 0;
+  color: var(--muted-strong);
+  line-height: 1.65;
+}
+
+.barber-showcase-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.barber-showcase-actions .btn-primary {
+  flex: 1 1 auto;
+  min-height: 44px;
+  border-radius: 999px;
+}
+
+.barber-showcase-actions .btn-ghost {
+  flex: 0 0 auto;
+  width: 44px;
+  min-width: 44px;
+  min-height: 44px;
+  border-radius: 999px;
 }
 
 .shops-shell {
@@ -857,7 +1316,102 @@ select option {
   background: var(--surface-3);
 }
 
+.user-location-marker {
+  background: none;
+  border: none;
+}
+
+.user-location,
+.shop-location {
+  background: none;
+  border: none;
+}
+
+.user-pin,
+.shop-pin {
+  position: relative;
+  width: 28px;
+  height: 36px;
+}
+
+.user-pin-head,
+.shop-pin-head {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border: 2px solid rgba(255, 255, 255, 0.18);
+  border-radius: 999px;
+  box-shadow: 0 10px 20px rgba(15, 23, 42, 0.28);
+}
+
+.user-pin-head {
+  background: linear-gradient(180deg, #fb7185 0%, #dc2626 100%);
+}
+
+.shop-pin-head {
+  background: linear-gradient(180deg, #38bdf8 0%, #1d4ed8 100%);
+}
+
+.user-pin-tail,
+.shop-pin-tail {
+  position: absolute;
+  left: 12px;
+  top: 22px;
+  width: 4px;
+  height: 14px;
+  border-radius: 999px;
+  transform: rotate(18deg);
+}
+
+.user-pin-tail {
+  background: #dc2626;
+}
+
+.shop-pin-tail {
+  background: #1d4ed8;
+}
+
+.shop-pin-glyph {
+  color: #f8fafc;
+  font-size: 13px;
+  line-height: 1;
+}
+
+.pulse-dot {
+  width: 18px;
+  height: 18px;
+  position: relative;
+}
+
+.pulse-dot .core {
+  width: 10px;
+  height: 10px;
+  background: #2f80ed;
+  border-radius: 50%;
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  z-index: 2;
+}
+
+.pulse-dot::before {
+  content: "";
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  background: rgba(47, 128, 237, 0.4);
+  border-radius: 50%;
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); opacity: 0.6; }
+  100% { transform: scale(2.5); opacity: 0; }
+}
+
 .real-map {
+  position: relative;
   z-index: 0;
 }
 
@@ -1214,11 +1768,18 @@ tbody tr:hover {
 }
 
 @media (max-width: 920px) {
+  .booking-shell,
   .account-section,
   .account-summary,
   .chat-shell,
   .shops-shell {
     grid-template-columns: 1fr;
+  }
+
+  .barber-browser-header,
+  .barber-shop-hero {
+    align-items: flex-start;
+    flex-direction: column;
   }
 
   .conversation-list,
@@ -1296,4 +1857,153 @@ tbody tr:hover {
   .auth-metrics {
     grid-template-columns: 1fr;
   }
+}
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  z-index: 9999; /* 🔥 KRİTİK */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-content {
+  width: 420px;
+  max-width: 90%;
+  background: #0f172a;
+  border-radius: 16px;
+  padding: 20px;
+  color: white;
+  position: relative;
+  z-index: 10000;
+}
+
+.barber-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+
+  margin-top: 24px;
+  margin-bottom: 24px;
+}
+
+.barber-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  border-radius: 12px;
+  background: #1f2937;
+  margin-bottom: 10px;
+  gap: 12px;
+}
+
+.barber-card > div {
+  min-width: 0;
+}
+
+.barber-card strong {
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.barber-card:hover {
+  transform: translateY(-2px);
+  background: #2b3648;
+
+  border-color: #3b82f6;
+}
+
+.barber-card:hover {
+  transform: translateY(-2px);
+  background: #2a3647;
+}
+
+.barber-avatar {
+  width: 52px;
+  height: 52px;
+
+  border-radius: 9999px;
+
+  background: #374151;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.barber-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.barber-info strong {
+  font-size: 18px;
+}
+
+.barber-info p {
+  margin: 0;
+  opacity: 0.7;
+}
+
+.btn-primary {
+  background: #2563eb;
+  border: none;
+  color: white;
+}
+
+@keyframes modalFade {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.user-location {
+  background: none;
+  border: none;
+}
+
+.pulse-dot {
+  width: 18px;
+  height: 18px;
+  position: relative;
+}
+
+.pulse-dot .core {
+  width: 10px;
+  height: 10px;
+  background: #2f80ed;
+  border-radius: 50%;
+  position: absolute;
+  top: 4px;
+  left: 4px;
+}
+
+.pulse-dot::before {
+  content: "";
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  background: rgba(47, 128, 237, 0.4);
+  border-radius: 50%;
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); opacity: 0.6; }
+  100% { transform: scale(2.5); opacity: 0; }
 }

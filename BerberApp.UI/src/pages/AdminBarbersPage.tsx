@@ -16,6 +16,7 @@ export function AdminBarbersPage() {
   const [fullName, setFullName] = useState("");
   const [specialty, setSpecialty] = useState("");
   const [shopId, setShopId] = useState("");
+  const [profileImageUrl, setProfileImageUrl] = useState("");
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
 
@@ -36,6 +37,7 @@ export function AdminBarbersPage() {
     setFullName("");
     setSpecialty("");
     setShopId("");
+    setProfileImageUrl("");
   }
 
   async function handleSubmit(event: React.FormEvent) {
@@ -47,7 +49,8 @@ export function AdminBarbersPage() {
       const payload = {
         fullName,
         specialty,
-        shopId: shopId ? Number(shopId) : null
+        shopId: shopId ? Number(shopId) : null,
+        profileImageUrl
       };
 
       if (editingId) {
@@ -85,6 +88,7 @@ export function AdminBarbersPage() {
       <form className="inline-form" onSubmit={handleSubmit}>
         <FormField label="Ad Soyad" value={fullName} onChange={(e) => setFullName(e.target.value)} required />
         <FormField label="Uzmanlik" value={specialty} onChange={(e) => setSpecialty(e.target.value)} />
+        <FormField label="Fotograf URL" type="url" value={profileImageUrl} onChange={(e) => setProfileImageUrl(e.target.value)} />
         <label className="field">
           <span>Dukkan</span>
           <select value={shopId} onChange={(e) => setShopId(e.target.value)}>
@@ -110,6 +114,7 @@ export function AdminBarbersPage() {
               <th>Ad Soyad</th>
               <th>Dukkan</th>
               <th>Uzmanlik</th>
+              <th>Fotograf</th>
               <th></th>
             </tr>
           </thead>
@@ -119,13 +124,18 @@ export function AdminBarbersPage() {
                 <td>{barber.fullName}</td>
                 <td>{barber.shopName || "-"}</td>
                 <td>{barber.specialty}</td>
+                <td>{barber.profileImageUrl ? "Var" : "-"}</td>
                 <td className="actions-cell">
-                  <Button variant="secondary" onClick={() => {
-                    setEditingId(barber.id);
-                    setFullName(barber.fullName);
-                    setSpecialty(barber.specialty);
-                    setShopId(barber.shopId?.toString() ?? "");
-                  }}>
+                  <Button
+                    variant="secondary"
+                    onClick={() => {
+                      setEditingId(barber.id);
+                      setFullName(barber.fullName);
+                      setSpecialty(barber.specialty);
+                      setShopId(barber.shopId?.toString() ?? "");
+                      setProfileImageUrl(barber.profileImageUrl ?? "");
+                    }}
+                  >
                     <Pencil size={16} />
                   </Button>
                   <Button variant="danger" onClick={() => handleDelete(barber.id)}>

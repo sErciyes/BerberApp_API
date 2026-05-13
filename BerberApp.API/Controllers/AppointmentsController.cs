@@ -31,9 +31,19 @@ namespace BerberApp.API.Controllers
         public IActionResult GetMyAppointments()
         {
             var userId = GetCurrentUserId();
-            var appointments = _appointmentService.GetByUserId(userId);
+            var appointments = User.IsInRole("Barber")
+                ? _appointmentService.GetByBarberUserId(userId)
+                : _appointmentService.GetByUserId(userId);
 
             return Ok(ApiResponse<object>.Ok(appointments));
+        }
+
+        [AllowAnonymous]
+        [HttpGet("available-slots")]
+        public IActionResult GetAvailableSlots([FromQuery] int barberId, [FromQuery] DateTime date)
+        {
+            var slots = _appointmentService.GetAvailableSlots(barberId, date);
+            return Ok(ApiResponse<object>.Ok(slots));
         }
 
         [HttpGet("{id}")]

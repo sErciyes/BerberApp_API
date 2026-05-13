@@ -37,8 +37,8 @@ export function AdminAppointmentsPage() {
   return (
     <div>
       <div className="page-heading">
-        <h1>Randevu yonetimi</h1>
-        <p>Admin tum randevularin durumunu guncelleyebilir.</p>
+        <h1>Randevu yönetimi</h1>
+        <p>Admin tüm randevuların durumunu güncelleyebilir.</p>
       </div>
 
       {error && <Notice type="error">{error}</Notice>}
@@ -48,12 +48,12 @@ export function AdminAppointmentsPage() {
         <table>
           <thead>
             <tr>
-              <th>Kullanici</th>
+              <th>Kullanıcı</th>
               <th>Berber</th>
               <th>Tarih</th>
               <th>Saat</th>
               <th>Durum</th>
-              <th>Guncelle</th>
+              <th>Güncelle</th>
             </tr>
           </thead>
           <tbody>

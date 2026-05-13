@@ -13,6 +13,7 @@ namespace BerberApp.Entities.Concrete
         public string FullName { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;
         public string? PhoneNumber { get; set; }
+        public string? ProfileImageUrl { get; set; }
         public string PasswordHash { get; set; } = string.Empty;
         public string Role { get; set; } = "User";
         public bool EmailConfirmed { get; set; }

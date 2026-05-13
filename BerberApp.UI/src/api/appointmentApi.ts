@@ -7,6 +7,13 @@ export async function getMyAppointments() {
   return response.data;
 }
 
+export async function getAvailableSlots(barberId: number, date: string) {
+  const response = await axiosClient.get<ApiResponse<string[]>>("/appointments/available-slots", {
+    params: { barberId, date }
+  });
+  return response.data;
+}
+
 export async function getAllAppointments() {
   const response = await axiosClient.get<ApiResponse<Appointment[]>>("/appointments");
   return response.data;

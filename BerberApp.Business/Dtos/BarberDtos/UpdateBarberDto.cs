@@ -12,5 +12,8 @@ namespace BerberApp.Business.Dtos.BarberDtos
         public string Specialty { get; set; } = "";
 
         public int? ShopId { get; set; }
+
+        [MaxLength(500, ErrorMessage = "Profil fotografi linki en fazla 500 karakter olabilir.")]
+        public string ProfileImageUrl { get; set; } = "";
     }
 }
