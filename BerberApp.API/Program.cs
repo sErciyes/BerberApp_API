@@ -174,8 +174,6 @@ if (shouldSeedDemoData)
     await DemoDataSeeder.SeedAsync(app.Services);
 }
 
-app.UseMiddleware<ExceptionMiddleware>();
-
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -188,6 +186,8 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseCors(corsPolicyName);
+
+app.UseMiddleware<ExceptionMiddleware>();
 
 app.UseAuthentication();
 
