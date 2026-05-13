@@ -47,7 +47,8 @@ builder.Services.AddCors(options =>
             "http://localhost:5173",
             "https://localhost:5173",
             "http://localhost:4173",
-            "https://localhost:4173"
+            "https://localhost:4173",
+            "https://lemon-river-04c6ba503.7.azurestaticapps.net"
         };
 
         if (!string.IsNullOrWhiteSpace(frontendBaseUrl))
