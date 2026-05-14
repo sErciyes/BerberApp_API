@@ -55,8 +55,15 @@ namespace BerberApp.Business.Services
         {
             var appointmentDate = date.Date;
             var slotTimes = new List<string>();
+            var businessNow = GetBusinessNow();
+            var businessToday = businessNow.Date;
 
             if (!_context.Barbers.Any(x => x.Id == barberId))
+            {
+                return slotTimes;
+            }
+
+            if (appointmentDate < businessToday)
             {
                 return slotTimes;
             }
@@ -69,7 +76,7 @@ namespace BerberApp.Business.Services
                 .Select(x => x.ApointmentTime)
                 .ToHashSet();
 
-            var nowTime = DateTime.Now.TimeOfDay;
+            var nowTime = businessNow.TimeOfDay;
 
             for (var hour = 9; hour < 18; hour++)
             {
@@ -82,7 +89,7 @@ namespace BerberApp.Business.Services
                         continue;
                     }
 
-                    if (appointmentDate == DateTime.Today && slot <= nowTime)
+                    if (appointmentDate == businessToday && slot <= nowTime)
                     {
                         continue;
                     }
@@ -139,7 +146,7 @@ namespace BerberApp.Business.Services
             var hasActiveAppointment = _context.Appointments.Any(x =>
                 x.UserId == userId &&
                 (x.Status == "Pending" || x.Status == "Approved") &&
-                x.AppointmentDate.Date >= DateTime.Today);
+                x.AppointmentDate.Date >= GetBusinessToday());
 
             if (hasActiveAppointment)
             {
@@ -148,13 +155,15 @@ namespace BerberApp.Business.Services
 
             var appointmentDate = dto.AppointmentDate.Date;
             var appointmentTime = dto.AppointmentTime.Trim();
+            var businessNow = GetBusinessNow();
+            var businessToday = businessNow.Date;
 
             if (string.IsNullOrWhiteSpace(appointmentTime))
             {
                 return ServiceResult<AppointmentDto>.Fail("Randevu saati bos olamaz.");
             }
 
-            if (appointmentDate < DateTime.Today)
+            if (appointmentDate < businessToday)
             {
                 return ServiceResult<AppointmentDto>.Fail("Gecmis tarihe randevu olusturulamaz.");
             }
@@ -177,7 +186,7 @@ namespace BerberApp.Business.Services
                 return ServiceResult<AppointmentDto>.Fail("Randevu saati sadece 00 veya 30 dakikalarinda olabilir.");
             }
 
-            if (appointmentDate == DateTime.Today && parsedTime <= DateTime.Now.TimeOfDay)
+            if (appointmentDate == businessToday && parsedTime <= businessNow.TimeOfDay)
             {
                 return ServiceResult<AppointmentDto>.Fail("Bugun icin gecmis saate randevu olusturulamaz.");
             }
@@ -285,6 +294,35 @@ namespace BerberApp.Business.Services
                 AppointmentTime = appointment.ApointmentTime,
                 Status = appointment.Status
             };
+        }
+
+        private static DateTime GetBusinessToday()
+        {
+            return GetBusinessNow().Date;
+        }
+
+        private static DateTime GetBusinessNow()
+        {
+            return TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, GetBusinessTimeZone());
+        }
+
+        private static TimeZoneInfo GetBusinessTimeZone()
+        {
+            foreach (var timeZoneId in new[] { "Europe/Istanbul", "Turkey Standard Time" })
+            {
+                try
+                {
+                    return TimeZoneInfo.FindSystemTimeZoneById(timeZoneId);
+                }
+                catch (TimeZoneNotFoundException)
+                {
+                }
+                catch (InvalidTimeZoneException)
+                {
+                }
+            }
+
+            return TimeZoneInfo.Local;
         }
 
         private void SendAppointmentSummaryEmails(Appointment appointment)
