@@ -1886,17 +1886,209 @@ tbody tr:hover {
     padding: 14px;
   }
 
+  .page-heading {
+    margin-bottom: 16px;
+  }
+
+  .page-heading h1,
+  .account-hero h1 {
+    font-size: 26px;
+  }
+
+  .page-heading p,
+  .section-heading p {
+    line-height: 1.55;
+  }
+
+  .form-panel,
+  .inline-form,
+  .booking-main,
+  .booking-preview,
+  .barber-browser-header,
+  .barber-shop-hero,
+  .account-hero {
+    padding: 14px;
+  }
+
   .account-hero {
     align-items: flex-start;
     flex-direction: column;
+  }
+
+  .account-summary {
+    gap: 10px;
+  }
+
+  .summary-card {
+    min-height: 74px;
+    padding: 13px;
+  }
+
+  .summary-card strong {
+    font-size: 21px;
   }
 
   .account-tabs {
     grid-template-columns: 1fr;
   }
 
+  .account-section {
+    gap: 14px;
+  }
+
+  .verification-item,
+  .security-note {
+    align-items: flex-start;
+    flex-wrap: wrap;
+    padding: 14px;
+  }
+
   .inline-form {
     grid-template-columns: 1fr;
+  }
+
+  .booking-shell {
+    gap: 14px;
+  }
+
+  .booking-sidebar {
+    position: static;
+  }
+
+  .booking-barber-list {
+    grid-template-columns: 1fr;
+  }
+
+  .booking-date-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .booking-date-card {
+    min-height: 82px;
+    padding: 13px;
+  }
+
+  .booking-date-input,
+  .booking-shop-field {
+    max-width: none;
+  }
+
+  .booking-slot-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .booking-actions,
+  .booking-actions .btn {
+    width: 100%;
+  }
+
+  .detail-list div {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .chat-shell {
+    height: auto;
+    min-height: 0;
+    max-height: none;
+  }
+
+  .conversation-list {
+    max-height: 220px;
+  }
+
+  .chat-panel {
+    min-height: 480px;
+  }
+
+  .chat-header {
+    min-height: auto;
+    padding: 12px 14px;
+  }
+
+  .message-list {
+    min-height: 320px;
+    padding: 14px;
+  }
+
+  .message-bubble {
+    max-width: 88%;
+  }
+
+  .message-form {
+    padding: 12px;
+  }
+
+  .admin-grid,
+  .list-grid,
+  .barber-card-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .item-card,
+  .admin-tile {
+    min-height: auto;
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .card-actions {
+    width: 100%;
+    justify-content: flex-end;
+  }
+
+  .barber-shop-filter {
+    width: 100%;
+  }
+
+  .barber-shop-meta {
+    width: 100%;
+  }
+
+  .barber-avatar-stack {
+    align-items: center;
+  }
+
+  .barber-avatar-stack strong {
+    font-size: 21px;
+  }
+
+  .barber-showcase-actions {
+    flex-wrap: wrap;
+  }
+
+  .barber-showcase-actions .btn-primary {
+    flex-basis: 100%;
+  }
+
+  .shops-shell {
+    min-height: 0;
+  }
+
+  .shop-list-panel {
+    max-height: 240px;
+  }
+
+  .map-canvas {
+    min-height: 360px;
+  }
+
+  .shop-detail-card {
+    align-items: stretch;
+  }
+
+  .shop-detail-card .btn {
+    width: 100%;
+  }
+
+  .table-wrap {
+    margin-inline: -2px;
+  }
+
+  th,
+  td {
+    padding: 11px 12px;
   }
 
   .auth-page {
@@ -1958,6 +2150,92 @@ tbody tr:hover {
 }
 
 @media (max-width: 520px) {
+  body {
+    min-width: 320px;
+  }
+
+  .sidebar {
+    padding: 12px;
+  }
+
+  .brand {
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+
+  .nav a {
+    min-height: 36px;
+    padding: 7px 9px;
+    font-size: 14px;
+  }
+
+  .topbar {
+    padding: 12px;
+  }
+
+  .content {
+    padding: 12px;
+  }
+
+  .page-heading h1,
+  .account-hero h1 {
+    font-size: 24px;
+  }
+
+  .account-summary {
+    grid-template-columns: 1fr;
+  }
+
+  .account-avatar {
+    width: 50px;
+    height: 50px;
+  }
+
+  .booking-date-grid,
+  .booking-slot-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .booking-slot {
+    min-height: 44px;
+  }
+
+  .booking-success-card {
+    padding: 22px 18px;
+  }
+
+  .booking-success-card h2 {
+    font-size: 24px;
+  }
+
+  .chat-panel {
+    min-height: 420px;
+  }
+
+  .message-bubble {
+    max-width: 94%;
+  }
+
+  .message-form {
+    grid-template-columns: 1fr;
+  }
+
+  .message-form .btn {
+    width: 100%;
+  }
+
+  .map-canvas {
+    min-height: 320px;
+  }
+
+  .modal-content {
+    width: calc(100vw - 24px);
+    max-width: none;
+    max-height: calc(100vh - 24px);
+    overflow-y: auto;
+    padding: 16px;
+  }
+
   .auth-hero {
     padding: 24px 20px;
   }
