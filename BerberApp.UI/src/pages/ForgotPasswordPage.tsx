@@ -24,7 +24,7 @@ export function ForgotPasswordPage() {
 
     try {
       const response = await forgotPassword({ email });
-      setSuccess(response.data?.message ?? response.message ?? "Sifre sifirlama maili gonderildi.");
+      setSuccess(response.data?.message ?? response.message ?? "Şifre sıfırlama maili gönderildi.");
       setToken(response.data?.developmentToken ?? "");
     } catch (err) {
       setError(getErrorMessage(err));
@@ -41,7 +41,7 @@ export function ForgotPasswordPage() {
 
     try {
       const response = await resetPassword({ email, token, newPassword });
-      setSuccess(response.data?.message ?? response.message ?? "Sifre guncellendi. Yeni sifrenle giris yapabilirsin.");
+      setSuccess(response.data?.message ?? response.message ?? "Şifre güncellendi. Yeni şifrenle giriş yapabilirsin.");
       setToken("");
       setNewPassword("");
     } catch (err) {
@@ -56,17 +56,17 @@ export function ForgotPasswordPage() {
       <section className="auth-hero">
         <div className="auth-kicker">
           <KeyRound size={17} />
-          Sifre yenileme
+          Şifre yenileme
         </div>
-        <h1>Hesap guvenligini mail onayi ile koru.</h1>
+        <h1>Hesap güvenliğini mail onayı ile koru.</h1>
         <p>
-          Sifre sifirlama tokeni kullanicinin dogrulanmis email adresine gonderilir ve kisa sure icinde kullanilmalidir.
+          Şifre sıfırlama tokeni kullanıcının doğrulanmış email adresine gönderilir ve kısa süre içinde kullanılmalıdır.
         </p>
 
         <div className="auth-metrics">
           <div>
             <strong>30 dk</strong>
-            <span>Token suresi</span>
+            <span>Token süresi</span>
           </div>
           <div>
             <strong>BCrypt</strong>
@@ -74,25 +74,25 @@ export function ForgotPasswordPage() {
           </div>
           <div>
             <strong>JWT</strong>
-            <span>Login</span>
+            <span>Giriş Yap</span>
           </div>
         </div>
 
         <div className="auth-feature">
           <MailCheck size={18} />
-          Email dogrulanmadiysa sifre sifirlama baslatilmaz
+          Email doğrulanmadıysa şifre sıfırlama başlatılmaz
         </div>
         <div className="auth-feature">
           <ShieldCheck size={18} />
-          Tokenlar veritabaninda hashli saklanir
+          Tokenlar veritabanında hashli saklanır
         </div>
       </section>
 
       <section className="auth-card">
         <div className="auth-card-header">
           <span>Hesap kurtarma</span>
-          <h2>Sifremi unuttum</h2>
-          <p>Email adresine gelen token ile yeni sifre belirle.</p>
+          <h2>Şifremi unuttum</h2>
+          <p>Email adresine gelen token ile yeni şifre belirle.</p>
         </div>
 
         {error && <Notice type="error">{error}</Notice>}
@@ -101,11 +101,11 @@ export function ForgotPasswordPage() {
         <form className="auth-form" onSubmit={handleRequest}>
           <FormField label="Email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
           <Button type="submit" variant="secondary" disabled={loading}>
-            Sifirlama Maili Gonder
+            Sıfırlama Maili Gönder
           </Button>
           {token && (
             <div className="token-box">
-              <span>Development sifre sifirlama tokeni</span>
+              <span>Development şifre sıfırlama tokeni</span>
               <strong>{token}</strong>
             </div>
           )}
@@ -113,12 +113,12 @@ export function ForgotPasswordPage() {
 
         <form className="auth-form auth-followup" onSubmit={handleReset}>
           <FormField label="Token" value={token} onChange={(e) => setToken(e.target.value)} required />
-          <FormField label="Yeni Sifre" type="password" value={newPassword} minLength={6} onChange={(e) => setNewPassword(e.target.value)} required />
+          <FormField label="Yeni Şifre" type="password" value={newPassword} minLength={6} onChange={(e) => setNewPassword(e.target.value)} required />
           <Button type="submit" disabled={loading || !email}>
-            Sifreyi Guncelle
+            Şifreyi Güncelle
           </Button>
           <p className="form-note">
-            Sifreni hatirladin mi? <Link to="/login">Giris yap</Link>
+            Şifreni hatırladın mı? <Link to="/login">Giriş yap</Link>
           </p>
         </form>
       </section>

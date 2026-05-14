@@ -27,7 +27,7 @@ export function AdminAppointmentsPage() {
 
     try {
       await updateAppointmentStatus(id, status);
-      setMessage("Randevu durumu guncellendi.");
+      setMessage("Randevu durumu güncellendi.");
       await loadAppointments();
     } catch (err) {
       setError(getErrorMessage(err));

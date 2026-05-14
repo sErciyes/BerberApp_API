@@ -55,7 +55,7 @@ export function AdminBarbersPage() {
 
       if (editingId) {
         await updateBarber(editingId, payload);
-        setMessage("Berber guncellendi.");
+        setMessage("Berber güncellendi.");
       } else {
         await createBarber(payload);
         setMessage("Berber eklendi.");
@@ -81,18 +81,18 @@ export function AdminBarbersPage() {
   return (
     <div>
       <div className="page-heading">
-        <h1>Berber yonetimi</h1>
-        <p>Admin rolundeki kullanicilar berber ekleyebilir, guncelleyebilir ve silebilir.</p>
+        <h1>Berber yönetimi</h1>
+        <p>Admin rolündeki kullanıcılar berber ekleyebilir, güncelleyebilir ve silebilir.</p>
       </div>
 
       <form className="inline-form" onSubmit={handleSubmit}>
         <FormField label="Ad Soyad" value={fullName} onChange={(e) => setFullName(e.target.value)} required />
-        <FormField label="Uzmanlik" value={specialty} onChange={(e) => setSpecialty(e.target.value)} />
-        <FormField label="Fotograf URL" type="url" value={profileImageUrl} onChange={(e) => setProfileImageUrl(e.target.value)} />
+        <FormField label="Uzmanlık" value={specialty} onChange={(e) => setSpecialty(e.target.value)} />
+        <FormField label="Fotoğraf URL" type="url" value={profileImageUrl} onChange={(e) => setProfileImageUrl(e.target.value)} />
         <label className="field">
-          <span>Dukkan</span>
+          <span>Dükkan</span>
           <select value={shopId} onChange={(e) => setShopId(e.target.value)}>
-            <option value="">Dukkansiz</option>
+            <option value="">Dükkansız</option>
             {shops.map((shop) => (
               <option key={shop.id} value={shop.id}>
                 {shop.name}
@@ -100,8 +100,8 @@ export function AdminBarbersPage() {
             ))}
           </select>
         </label>
-        <Button type="submit">{editingId ? "Guncelle" : "Ekle"}</Button>
-        {editingId && <Button type="button" variant="secondary" onClick={resetForm}>Vazgec</Button>}
+        <Button type="submit">{editingId ? "Güncelle" : "Ekle"}</Button>
+        {editingId && <Button type="button" variant="secondary" onClick={resetForm}>Vazgeç</Button>}
       </form>
 
       {error && <Notice type="error">{error}</Notice>}
@@ -112,9 +112,9 @@ export function AdminBarbersPage() {
           <thead>
             <tr>
               <th>Ad Soyad</th>
-              <th>Dukkan</th>
-              <th>Uzmanlik</th>
-              <th>Fotograf</th>
+              <th>Dükkan</th>
+              <th>Uzmanlık</th>
+              <th>Fotoğraf</th>
               <th></th>
             </tr>
           </thead>

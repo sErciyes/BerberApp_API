@@ -98,7 +98,7 @@ export function BarbersPage() {
       <div className="page-heading row-heading">
         <div>
           <h1>Berberler</h1>
-          <p>Dukkan secerek o subedeki berberleri daha duzenli ve dogal bir akisla incele.</p>
+          <p>Dükkan seçerek o şubedeki berberleri daha düzenli ve doğal bir akışla incele.</p>
         </div>
         {auth && (
           <Link className="btn btn-primary" to="/appointments/new">
@@ -111,12 +111,12 @@ export function BarbersPage() {
       <div className="barber-browser-shell">
         <section className="barber-browser-header">
           <div className="section-heading">
-            <h2>Dukkan filtresi</h2>
-            <p>Tum sistem yerine secilen dukkandaki berberler gosterilir.</p>
+            <h2>Dükkan filtresi</h2>
+            <p>Tüm sistem yerine seçilen dükkandaki berberler gösterilir.</p>
           </div>
 
           <label className="field barber-shop-filter" htmlFor="barberShopId">
-            <span>Dukkan</span>
+            <span>Dükkan</span>
             <select
               id="barberShopId"
               value={selectedShopId}
@@ -132,13 +132,13 @@ export function BarbersPage() {
         </section>
 
         {error && <Notice type="error">{error}</Notice>}
-        {loading && <Notice>Dukkanlar yukleniyor.</Notice>}
-        {barbersLoading && <Notice>Berberler yukleniyor.</Notice>}
+        {loading && <Notice>Dükkanlar yükleniyor.</Notice>}
+        {barbersLoading && <Notice>Berberler yükleniyor.</Notice>}
 
         {selectedShop && (
           <section className="barber-shop-hero">
             <div>
-              <span className="muted">Secili dukkan</span>
+              <span className="muted">Seçili dükkan</span>
               <h2>{selectedShop.name}</h2>
               <p>{selectedShop.district}, {selectedShop.city}</p>
             </div>
@@ -164,12 +164,12 @@ export function BarbersPage() {
 
               <div className="barber-showcase-body">
                 <div className="barber-pill-row">
-                  <span className="status-chip success">{barber.shopName || "Dukkan bilgisi yok"}</span>
+                  <span className="status-chip success">{barber.shopName || "Dükkan bilgisi yok"}</span>
                   <span className="status-chip warning">{barber.specialty || "Genel hizmet"}</span>
                 </div>
 
                 <div className="barber-showcase-copy">
-                  <p>Bu berber sadece secili dukkan baglaminda gosterilir ve randevu akisi o sube icin devam eder.</p>
+                  <p>Bu berber sadece seçili dükkan bağlamında gösterilir ve randevu akışı o şube için devam eder.</p>
                 </div>
 
                 {auth && (
@@ -196,7 +196,7 @@ export function BarbersPage() {
         </div>
 
         {!loading && !barbersLoading && barbers.length === 0 && (
-          <Notice>Bu dukkana bagli aktif berber bulunmuyor.</Notice>
+          <Notice>Bu dükkana bağlı aktif berber bulunmuyor.</Notice>
         )}
       </div>
     </div>

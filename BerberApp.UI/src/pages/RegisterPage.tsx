@@ -28,7 +28,7 @@ export function RegisterPage() {
 
     try {
       const response = await register({ fullName, email, phoneNumber, password, accountType, specialty });
-      setSuccess(response.data?.message ?? response.message ?? "Kayit basarili. Email dogrulama gerekli.");
+      setSuccess(response.data?.message ?? response.message ?? "Kayıt başarılı. Email doğrulama gerekli.");
       setPhoneCode(response.data?.developmentToken ?? "");
     } catch (err) {
       setError(getErrorMessage(err));
@@ -45,7 +45,7 @@ export function RegisterPage() {
 
     try {
       const response = await verifyEmail({ email, token: verificationToken });
-      setSuccess(response.data?.message ?? response.message ?? "Email dogrulandi. Giris yapabilirsin.");
+      setSuccess(response.data?.message ?? response.message ?? "Email doğrulandı. Giriş yapabilirsin.");
     } catch (err) {
       setError(getErrorMessage(err));
     } finally {
@@ -60,7 +60,7 @@ export function RegisterPage() {
 
     try {
       const response = await resendEmailVerification({ email });
-      setSuccess(response.data?.message ?? response.message ?? "Dogrulama maili tekrar gonderildi.");
+      setSuccess(response.data?.message ?? response.message ?? "Doğrulama maili tekrar gönderildi.");
       setVerificationToken(response.data?.developmentToken ?? "");
     } catch (err) {
       setError(getErrorMessage(err));
@@ -76,7 +76,7 @@ export function RegisterPage() {
 
     try {
       const response = await requestPhoneVerification({ phoneNumber });
-      setSuccess(response.data?.message ?? response.message ?? "Telefon dogrulama kodu gonderildi.");
+      setSuccess(response.data?.message ?? response.message ?? "Telefon doğrulama kodu gönderildi.");
       setPhoneCode(response.data?.developmentToken ?? "");
     } catch (err) {
       setError(getErrorMessage(err));
@@ -93,7 +93,7 @@ export function RegisterPage() {
 
     try {
       const response = await verifyPhone({ phoneNumber, code: phoneCode });
-      setSuccess(response.data?.message ?? response.message ?? "Telefon numarasi dogrulandi.");
+      setSuccess(response.data?.message ?? response.message ?? "Telefon numarası doğrulandı.");
       setPhoneCode("");
     } catch (err) {
       setError(getErrorMessage(err));
@@ -109,9 +109,9 @@ export function RegisterPage() {
           <Scissors size={17} />
           Yeni hesap
         </div>
-        <h1>Berber randevulari icin sade bir kontrol merkezi.</h1>
+        <h1>Berber randevuları için sade bir kontrol merkezi.</h1>
         <p>
-          Kullanici randevu alir, berber kendi mesajlarini yanitlar. Admin rol yonetimi API uzerinden kontrollu yapilir.
+          Kullanıcı randevu alır, berber kendi mesajlarını yanıtlar. Admin rol yönetimi API üzerinden kontrollü yapılır.
         </p>
 
         <div className="auth-metrics">
@@ -125,25 +125,25 @@ export function RegisterPage() {
           </div>
           <div>
             <strong>Admin</strong>
-            <span>Yonetim</span>
+            <span>Yönetim</span>
           </div>
         </div>
 
         <div className="auth-feature">
           <LockKeyhole size={18} />
-          Sifreler BCrypt ile hashlenir, response icinde asla donmez
+          Şifreler BCrypt ile hashlenir, response içinde asla dönmez
         </div>
         <div className="auth-feature">
           <CalendarClock size={18} />
-          Randevu kurallari backend tarafinda merkezi olarak korunur
+          Randevu kuralları backend tarafında merkezi olarak korunur
         </div>
       </section>
 
       <section className="auth-card">
         <div className="auth-card-header">
-          <span>Baslayalim</span>
-          <h2>Kayit ol</h2>
-          <p>Kullanici veya berber hesabi olustur.</p>
+          <span>Başlayalım</span>
+          <h2>Kayıt ol</h2>
+          <p>Kullanıcı veya berber hesabı oluştur.</p>
         </div>
 
         <form className="auth-form" onSubmit={handleSubmit}>
@@ -155,7 +155,7 @@ export function RegisterPage() {
               type="button"
               onClick={() => setAccountType("User")}
             >
-              Kullanici
+              Kullanıcı
             </button>
             <button
               className={accountType === "Barber" ? "active" : ""}
@@ -169,30 +169,30 @@ export function RegisterPage() {
           <FormField label="Email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
           <FormField label="Telefon" value={phoneNumber} placeholder="05xx xxx xx xx" onChange={(e) => setPhoneNumber(e.target.value)} required />
           {accountType === "Barber" && (
-            <FormField label="Uzmanlik" value={specialty} placeholder="Sakal tras, sac kesim" onChange={(e) => setSpecialty(e.target.value)} />
+            <FormField label="Uzmanlık" value={specialty} placeholder="Sakal tıraş, saç kesim" onChange={(e) => setSpecialty(e.target.value)} />
           )}
-          <FormField label="Sifre" type="password" value={password} onChange={(e) => setPassword(e.target.value)} minLength={6} required />
+          <FormField label="Şifre" type="password" value={password} onChange={(e) => setPassword(e.target.value)} minLength={6} required />
           <Button type="submit" disabled={loading}>
-            {loading ? "Kayit yapiliyor" : "Kayit ol"}
+            {loading ? "Kayıt yapılıyor" : "Kayıt ol"}
           </Button>
           {verificationToken && (
             <div className="token-box">
-              <span>Development dogrulama tokeni</span>
+              <span>Development doğrulama tokeni</span>
               <strong>{verificationToken}</strong>
             </div>
           )}
         </form>
 
         <form className="auth-form auth-followup" onSubmit={handleVerify}>
-          <FormField label="Email dogrulama tokeni" value={verificationToken} onChange={(e) => setVerificationToken(e.target.value)} required />
+          <FormField label="Email doğrulama tokeni" value={verificationToken} onChange={(e) => setVerificationToken(e.target.value)} required />
           <Button type="submit" variant="secondary" disabled={loading || !email}>
-            Email dogrula
+            Email doğrula
           </Button>
           <Button type="button" variant="ghost" disabled={loading || !email} onClick={handleResend}>
-            Dogrulama Mailini Tekrar Gonder
+            Doğrulama Mailini Tekrar Gönder
           </Button>
           <p className="form-note">
-            Hesabin var mi? <Link to="/login">Giris yap</Link>
+            Hesabın var mı? <Link to="/login">Giriş yap</Link>
           </p>
         </form>
 
@@ -203,12 +203,12 @@ export function RegisterPage() {
               <strong>{phoneCode}</strong>
             </div>
           )}
-          <FormField label="Telefon dogrulama kodu" value={phoneCode} onChange={(e) => setPhoneCode(e.target.value)} minLength={6} maxLength={6} required />
+          <FormField label="Telefon doğrulama kodu" value={phoneCode} onChange={(e) => setPhoneCode(e.target.value)} minLength={6} maxLength={6} required />
           <Button type="submit" variant="secondary" disabled={loading || !phoneNumber}>
-            Telefonu Dogrula
+            Telefonu Doğrula
           </Button>
           <Button type="button" variant="ghost" disabled={loading || !phoneNumber} onClick={handleRequestPhoneCode}>
-            SMS Kodunu Tekrar Gonder
+            SMS Kodunu Tekrar Gönder
           </Button>
         </form>
       </section>

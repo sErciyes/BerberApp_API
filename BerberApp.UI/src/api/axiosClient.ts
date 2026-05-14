@@ -31,5 +31,5 @@ export function getErrorMessage(error: unknown) {
     }
   }
 
-  return "Beklenmeyen bir hata olustu.";
+  return "Beklenmeyen bir hata oluştu.";
 }

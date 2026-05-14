@@ -24,7 +24,7 @@ export function AdminUsersPage() {
 
     try {
       await updateUserRole(user.id, role);
-      setMessage(`${user.email} rolu guncellendi.`);
+      setMessage(`${user.email} rolü güncellendi.`);
       await loadUsers();
     } catch (err) {
       setError(getErrorMessage(err));
@@ -34,8 +34,8 @@ export function AdminUsersPage() {
   return (
     <div>
       <div className="page-heading">
-        <h1>Kullanici yonetimi</h1>
-        <p>Kullanici rollerini User veya Admin olarak guncelle.</p>
+        <h1>Kullanıcı yönetimi</h1>
+        <p>Kullanıcı rollerini User veya Admin olarak güncelle.</p>
       </div>
 
       {error && <Notice type="error">{error}</Notice>}

@@ -156,7 +156,7 @@ export function CreateAppointmentPage() {
     setError("");
 
     if (!appointmentTime) {
-      setError("Lutfen uygun bir saat sec.");
+      setError("Lütfen uygun bir saat seç.");
       return;
     }
 
@@ -179,7 +179,7 @@ export function CreateAppointmentPage() {
     <div className="center-page">
       <div className="page-heading">
         <h1>Yeni randevu</h1>
-        <p>Once dukkani sec, sonra o dukkandaki berberlerden biriyle 30 dakikalik uygun bir slot ayarla.</p>
+        <p>Önce dükkanı seç, sonra o dükkandaki berberlerden biriyle 30 dakikalık uygun bir slot ayarla.</p>
       </div>
 
       <form className="booking-shell" onSubmit={handleSubmit}>
@@ -192,12 +192,12 @@ export function CreateAppointmentPage() {
 
           <div className="booking-section">
             <div className="section-heading">
-              <h2>Dukkan sec</h2>
-              <p>Secilen dukkanin berberleri asagida filtrelenir.</p>
+              <h2>Dükkan seç</h2>
+              <p>Seçilen dükkanın berberleri aşağıda filtrelenir.</p>
             </div>
 
             <label className="field booking-shop-field" htmlFor="shopId">
-              <span>Dukkanlar</span>
+              <span>Dükkanlar</span>
               <select id="shopId" value={shopId} onChange={(event) => setShopId(event.target.value)} required>
                 {shops.map((shop) => (
                   <option key={shop.id} value={shop.id}>
@@ -210,14 +210,14 @@ export function CreateAppointmentPage() {
 
           <div className="booking-section">
             <div className="section-heading">
-              <h2>Berber sec</h2>
-              <p>Sadece secilen dukkandaki berberler gosterilir.</p>
+              <h2>Berber seç</h2>
+              <p>Sadece seçilen dükkandaki berberler gösterilir.</p>
             </div>
 
             {barbersLoading ? (
-              <Notice>Berberler yukleniyor.</Notice>
+              <Notice>Berberler yükleniyor.</Notice>
             ) : barbers.length === 0 ? (
-              <Notice type="error">Bu dukkana bagli berber bulunmuyor.</Notice>
+              <Notice type="error">Bu dükkana bağlı berber bulunmuyor.</Notice>
             ) : (
               <div className="segmented-control booking-barber-list">
                 {barbers.map((barber) => (
@@ -242,8 +242,8 @@ export function CreateAppointmentPage() {
 
           <div className="booking-section">
             <div className="section-heading">
-              <h2>Tarih sec</h2>
-              <p>Yaklasan gunleri kart olarak sec, istersen ileri tarih yaz.</p>
+              <h2>Tarih seç</h2>
+              <p>Yaklaşan günleri kart olarak seç, istersen ileri tarih yaz.</p>
             </div>
 
             <div className="booking-date-grid">
@@ -261,7 +261,7 @@ export function CreateAppointmentPage() {
             </div>
 
             <label className="field booking-date-input" htmlFor="appointmentDate">
-              <span>Ileri tarih</span>
+              <span>İleri tarih</span>
               <input
                 id="appointmentDate"
                 type="date"
@@ -275,14 +275,14 @@ export function CreateAppointmentPage() {
 
           <div className="booking-section">
             <div className="section-heading">
-              <h2>Saat sec</h2>
-              <p>Sadece 30 dakikalik musait slotlar acik gorunur.</p>
+              <h2>Saat seç</h2>
+              <p>Sadece 30 dakikalık müsait slotlar açık görünür.</p>
             </div>
 
             {slotLoading ? (
-              <Notice>Musait saatler yukleniyor.</Notice>
+              <Notice>Müsait saatler yükleniyor.</Notice>
             ) : availableSlots.length === 0 ? (
-              <Notice type="error">Bu tarih icin uygun slot bulunmuyor. Baska bir gun sec.</Notice>
+              <Notice type="error">Bu tarih için uygun slot bulunmuyor. Başka bir gün seç.</Notice>
             ) : (
               <div className="booking-slot-grid">
                 {availableSlots.map((slot) => (
@@ -302,7 +302,7 @@ export function CreateAppointmentPage() {
 
           <div className="booking-actions">
             <Button type="submit" disabled={submitting || !shopId || !barberId || !appointmentDate || !appointmentTime}>
-              {submitting ? "Randevu olusturuluyor" : "Randevu olustur"}
+              {submitting ? "Randevu oluşturuluyor" : "Randevu oluştur"}
             </Button>
           </div>
         </section>
@@ -310,30 +310,30 @@ export function CreateAppointmentPage() {
         <aside className="booking-sidebar">
           <div className="booking-preview">
             <div className="section-heading">
-              <h2>Randevu Ozeti</h2>
-              <p>Kaydetmeden once secimini kontrol et.</p>
+              <h2>Randevu Özeti</h2>
+              <p>Kaydetmeden önce seçimini kontrol et.</p>
             </div>
 
             <div className="detail-list">
               <div>
-                <strong><MapPinned size={16} /> Dukkan</strong>
-                <span>{selectedShop?.name || "Secilmedi"}</span>
+                <strong><MapPinned size={16} /> Dükkan</strong>
+                <span>{selectedShop?.name || "Seçilmedi"}</span>
               </div>
               <div>
                 <strong><Scissors size={16} /> Berber</strong>
-                <span>{selectedBarber?.fullName ?? "Secilmedi"}</span>
+                <span>{selectedBarber?.fullName ?? "Seçilmedi"}</span>
               </div>
               <div>
-                <strong>Uzmanlik</strong>
+                <strong>Uzmanlık</strong>
                 <span>{selectedBarber?.specialty || "Genel hizmet"}</span>
               </div>
               <div>
                 <strong><CalendarDays size={16} /> Tarih</strong>
-                <span>{appointmentDate ? new Date(appointmentDate).toLocaleDateString("tr-TR") : "Secilmedi"}</span>
+                <span>{appointmentDate ? new Date(appointmentDate).toLocaleDateString("tr-TR") : "Seçilmedi"}</span>
               </div>
               <div>
                 <strong><Clock3 size={16} /> Saat</strong>
-                <span>{appointmentTime || "Secilmedi"}</span>
+                <span>{appointmentTime || "Seçilmedi"}</span>
               </div>
             </div>
           </div>
@@ -344,13 +344,13 @@ export function CreateAppointmentPage() {
         <div className="booking-success-overlay">
           <div className="booking-success-card">
             <CheckCircle2 size={46} />
-            <h2>Randevun olusturuldu</h2>
+            <h2>Randevun oluşturuldu</h2>
             <p>
-              {selectedBarber?.fullName || "Secili berber"} icin {appointmentDate ? new Date(appointmentDate).toLocaleDateString("tr-TR") : ""}
-              {" "}tarihinde saat {appointmentTime} slotu ayrildi.
+              {selectedBarber?.fullName || "Seçili berber"} için {appointmentDate ? new Date(appointmentDate).toLocaleDateString("tr-TR") : ""}
+              {" "}tarihinde saat {appointmentTime} slotu ayrıldı.
             </p>
             <div className="booking-success-actions">
-              <Button onClick={() => navigate("/appointments/my")}>Randevularima git</Button>
+              <Button onClick={() => navigate("/appointments/my")}>Randevularıma git</Button>
             </div>
           </div>
         </div>
@@ -360,8 +360,8 @@ export function CreateAppointmentPage() {
         <div className="booking-success-overlay">
           <div className="booking-success-card booking-progress-card">
             <Clock3 size={42} />
-            <h2>Randevu olusturuluyor</h2>
-            <p>Secimin kaydediliyor. Bir iki saniye icinde onay ekrani gorunecek.</p>
+            <h2>Randevu oluşturuluyor</h2>
+            <p>Seçimin kaydediliyor. Bir iki saniye içinde onay ekranı görünecek.</p>
           </div>
         </div>
       )}

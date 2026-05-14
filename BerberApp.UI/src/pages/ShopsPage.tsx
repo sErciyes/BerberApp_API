@@ -29,7 +29,7 @@ export function ShopsPage() {
   const [loading, setLoading] = useState(true);
   const [locating, setLocating] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
-  const [locationLabel, setLocationLabel] = useState("Tum dukkanlar");
+  const [locationLabel, setLocationLabel] = useState("Tüm dükkanlar");
   const [position, setPosition] = useState<Position | null>(null);
 
   const mapElementRef = useRef<HTMLDivElement | null>(null);
@@ -144,7 +144,7 @@ export function ShopsPage() {
         zIndexOffset: 1000
       })
         .addTo(mapRef.current)
-        .bindPopup("Buradasin");
+        .bindPopup("Buradasın");
     }
   }, [position]);
 
@@ -211,7 +211,7 @@ export function ShopsPage() {
 
   function handleUseLocation() {
     if (!navigator.geolocation) {
-      setError("Tarayici konum bilgisini desteklemiyor.");
+      setError("Tarayıcı konum bilgisini desteklemiyor.");
       return;
     }
 
@@ -234,7 +234,7 @@ export function ShopsPage() {
 
           setShops(items);
           setSelectedShop(items[0] ?? null);
-          setLocationLabel("Konumuna gore yakin dukkanlar");
+          setLocationLabel("Konumuna göre yakın dükkanlar");
 
           if (items[0]) {
             void openShopModal(items[0]);
@@ -246,7 +246,7 @@ export function ShopsPage() {
         }
       },
       () => {
-        setError("Konum alinamadi. Tum dukkanlar listelenmeye devam ediyor.");
+        setError("Konum alınamadı. Tüm dükkanlar listelenmeye devam ediyor.");
         setLocating(false);
       },
       { enableHighAccuracy: true, timeout: 10000 }
@@ -257,18 +257,18 @@ export function ShopsPage() {
     <div>
       <div className="page-heading row-heading">
         <div>
-          <h1>Dukkanlar</h1>
-          <p>Harita uzerinden yakin dukkanlari kesfet ve berberlerini incele.</p>
+          <h1>Dükkanlar</h1>
+          <p>Harita üzerinden yakın dükkanları keşfet ve berberlerini incele.</p>
         </div>
 
         <Button onClick={handleUseLocation} disabled={locating}>
           <Navigation size={18} />
-          {locating ? "Konum aliniyor" : "Konumuma gore ara"}
+          {locating ? "Konum alınıyor" : "Konumuma göre ara"}
         </Button>
       </div>
 
       {error && <Notice type="error">{error}</Notice>}
-      {loading && <Notice>Dukkanlar yukleniyor.</Notice>}
+      {loading && <Notice>Dükkanlar yükleniyor.</Notice>}
 
       <div className="shops-shell">
         <aside className="shop-list-panel">
@@ -279,7 +279,7 @@ export function ShopsPage() {
 
           {shops.length === 0 && !loading && (
             <div className="empty-chat">
-              <span>Listelenecek dukkan bulunamadi.</span>
+              <span>Listelenecek dükkan bulunamadı.</span>
             </div>
           )}
 
@@ -300,7 +300,7 @@ export function ShopsPage() {
         </aside>
 
         <section className="map-panel">
-          <div className="map-canvas real-map" ref={mapElementRef} aria-label="Dukkan haritasi" />
+          <div className="map-canvas real-map" ref={mapElementRef} aria-label="Dükkan haritası" />
         </section>
       </div>
 
@@ -311,7 +311,7 @@ export function ShopsPage() {
             <p>{selectedShop.address}</p>
 
             <div className="barber-grid">
-              {barbers.length === 0 && <p>Bu dukkana bagli berber henuz eklenmemis.</p>}
+              {barbers.length === 0 && <p>Bu dükkana bağlı berber henüz eklenmemiş.</p>}
 
               {barbers.map((barber) => (
                 <div className="barber-card" key={barber.id}>

@@ -6,7 +6,7 @@ export function AdminDashboardPage() {
     <div>
       <div className="page-heading">
         <h1>Admin</h1>
-        <p>Berber, kullanici ve randevu yonetimi.</p>
+        <p>Berber, kullanıcı ve randevu yönetimi.</p>
       </div>
 
       <div className="admin-grid">
@@ -17,13 +17,13 @@ export function AdminDashboardPage() {
         </Link>
         <Link to="/admin/users" className="admin-tile">
           <Users size={24} />
-          <strong>Kullanicilar</strong>
-          <span>Rol yonetimi</span>
+          <strong>Kullanıcılar</strong>
+          <span>Rol yönetimi</span>
         </Link>
         <Link to="/admin/appointments" className="admin-tile">
           <CalendarClock size={24} />
           <strong>Randevular</strong>
-          <span>Status guncelleme</span>
+          <span>Status güncelleme</span>
         </Link>
       </div>
     </div>

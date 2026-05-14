@@ -36,7 +36,7 @@ export function Layout() {
         <nav className="nav">
           <NavLink to="/shops">
             <MapPinned size={18} />
-            Dukkanlar
+            Dükkanlar
           </NavLink>
           <NavLink to="/barbers">
             <Scissors size={18} />
@@ -46,7 +46,7 @@ export function Layout() {
             <>
               <NavLink to="/appointments/my">
                 <CalendarCheck size={18} />
-                Randevularim
+                Randevularım
               </NavLink>
               <NavLink to="/messages">
                 <MessageCircle size={18} />
@@ -83,7 +83,7 @@ export function Layout() {
         <header className="topbar">
           <div>
             <span className="muted">Workspace</span>
-            <strong>Berber Randevu Yonetimi</strong>
+            <strong>Berber Randevu Yönetimi</strong>
           </div>
           {auth ? (
             <div className="user-chip">
@@ -92,20 +92,20 @@ export function Layout() {
               </div>
               <span>{auth.fullName}</span>
               <small>{auth.role}</small>
-              <Button variant="ghost" onClick={toggleTheme} title={theme === "dark" ? "Aydinlik mod" : "Karanlik mod"}>
+              <Button variant="ghost" onClick={toggleTheme} title={theme === "dark" ? "Aydınlık mod" : "Karanlık mod"}>
                 {theme === "dark" ? <Sun size={17} /> : <Moon size={17} />}
               </Button>
-              <Button variant="ghost" onClick={handleLogout} title="Cikis yap">
+              <Button variant="ghost" onClick={handleLogout} title="Çıkış yap">
                 <LogOut size={17} />
               </Button>
             </div>
           ) : (
             <div className="auth-links">
-              <Button variant="ghost" onClick={toggleTheme} title={theme === "dark" ? "Aydinlik mod" : "Karanlik mod"}>
+              <Button variant="ghost" onClick={toggleTheme} title={theme === "dark" ? "Aydınlık mod" : "Karanlık mod"}>
                 {theme === "dark" ? <Sun size={17} /> : <Moon size={17} />}
               </Button>
-              <NavLink to="/login">Login</NavLink>
-              <NavLink to="/register">Register</NavLink>
+              <NavLink to="/login">Giriş Yap</NavLink>
+              <NavLink to="/register">Kayıt Ol</NavLink>
             </div>
           )}
         </header>

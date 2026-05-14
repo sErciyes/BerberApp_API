@@ -36,14 +36,14 @@ export function ProfilePage() {
 
     if (tokenFromUrl) {
       setPasswordChangeToken(tokenFromUrl);
-      setPasswordMessage("Mail linkindeki onay tokeni forma yerlestirildi. Sifre degisikligini tamamlamak icin onayla.");
+      setPasswordMessage("Mail linkindeki onay tokeni forma yerleştirildi. Şifre değişikliğini tamamlamak için onayla.");
       setActiveTab("security");
     }
 
     getMe()
       .then((response) => {
         if (!response.data) {
-          setError(response.message ?? "Profil bilgisi alinamadi.");
+          setError(response.message ?? "Profil bilgisi alınamadı.");
           return;
         }
 
@@ -71,7 +71,7 @@ export function ProfilePage() {
       });
 
       if (!response.data) {
-        setError(response.message ?? "Profil guncellenemedi.");
+        setError(response.message ?? "Profil güncellenemedi.");
         return;
       }
 
@@ -82,7 +82,7 @@ export function ProfilePage() {
         phoneNumber: response.data.phoneNumber,
         profileImageUrl: response.data.profileImageUrl
       });
-      setSuccess(response.message ?? "Profil guncellendi.");
+      setSuccess(response.message ?? "Profil güncellendi.");
     } catch (err) {
       setError(getErrorMessage(err));
     } finally {
@@ -97,7 +97,7 @@ export function ProfilePage() {
 
     try {
       const response = await requestPhoneVerification({ phoneNumber });
-      setPhoneMessage(response.data?.message ?? response.message ?? "Telefon dogrulama kodu gonderildi.");
+      setPhoneMessage(response.data?.message ?? response.message ?? "Telefon doğrulama kodu gönderildi.");
       setPhoneCode(response.data?.developmentToken ?? "");
     } catch (err) {
       setError(getErrorMessage(err));
@@ -114,7 +114,7 @@ export function ProfilePage() {
 
     try {
       const response = await verifyPhone({ phoneNumber, code: phoneCode });
-      setPhoneMessage(response.data?.message ?? response.message ?? "Telefon numarasi dogrulandi.");
+      setPhoneMessage(response.data?.message ?? response.message ?? "Telefon numarası doğrulandı.");
       setPhoneCode("");
       const me = await getMe();
       if (me.data) {
@@ -135,7 +135,7 @@ export function ProfilePage() {
 
     try {
       const response = await requestPasswordChange({ currentPassword, newPassword });
-      setPasswordMessage(response.data?.message ?? response.message ?? "Onay maili gonderildi.");
+      setPasswordMessage(response.data?.message ?? response.message ?? "Onay maili gönderildi.");
       setPasswordChangeToken(response.data?.developmentToken ?? "");
     } catch (err) {
       setError(getErrorMessage(err));
@@ -152,7 +152,7 @@ export function ProfilePage() {
 
     try {
       const response = await confirmPasswordChange({ token: passwordChangeToken });
-      setPasswordMessage(response.data?.message ?? response.message ?? "Sifre guncellendi.");
+      setPasswordMessage(response.data?.message ?? response.message ?? "Şifre güncellendi.");
       setCurrentPassword("");
       setNewPassword("");
       setPasswordChangeToken("");
@@ -176,7 +176,7 @@ export function ProfilePage() {
         <div>
           <span className="muted">Hesap merkezi</span>
           <h1>Profil</h1>
-          <p>Kimlik, dogrulama ve guvenlik ayarlarini tek yerden yonet.</p>
+          <p>Kimlik, doğrulama ve güvenlik ayarlarını tek yerden yönet.</p>
         </div>
       </div>
 
@@ -192,7 +192,7 @@ export function ProfilePage() {
               <strong>{user.role}</strong>
             </div>
             <div className="summary-card">
-              <span>Dogrulama</span>
+              <span>Doğrulama</span>
               <strong>{verificationScore}/2</strong>
             </div>
             <div className="summary-card">
@@ -201,18 +201,18 @@ export function ProfilePage() {
             </div>
           </div>
 
-          <div className="account-tabs" role="tablist" aria-label="Profil bolumleri">
+          <div className="account-tabs" role="tablist" aria-label="Profil bölümleri">
             <button className={activeTab === "profile" ? "active" : ""} type="button" onClick={() => setActiveTab("profile")}>
               <UserRound size={17} />
               Profil Bilgileri
             </button>
             <button className={activeTab === "verification" ? "active" : ""} type="button" onClick={() => setActiveTab("verification")}>
               <ShieldCheck size={17} />
-              Dogrulamalar
+              Doğrulamalar
             </button>
             <button className={activeTab === "security" ? "active" : ""} type="button" onClick={() => setActiveTab("security")}>
               <KeyRound size={17} />
-              Guvenlik
+              Güvenlik
             </button>
           </div>
 
@@ -221,14 +221,14 @@ export function ProfilePage() {
               <form className="form-panel" onSubmit={handleSubmit}>
                 <div className="section-heading">
                   <h2>Temel Bilgiler</h2>
-                  <p>Randevu ve bildirimlerde kullanilacak hesap bilgileri.</p>
+                  <p>Randevu ve bildirimlerde kullanılacak hesap bilgileri.</p>
                 </div>
                 <FormField label="Ad Soyad" name="fullName" value={fullName} maxLength={50} onChange={(event) => setFullName(event.target.value)} required />
                 <FormField label="Email" name="email" type="email" value={email} maxLength={150} onChange={(event) => setEmail(event.target.value)} required />
                 <FormField label="Telefon" name="phoneNumber" value={phoneNumber} maxLength={20} placeholder="05xx xxx xx xx" onChange={(event) => setPhoneNumber(event.target.value)} required />
-                <FormField label="Profil Fotografi URL" name="profileImageUrl" type="url" value={profileImageUrl} maxLength={500} placeholder="https://..." onChange={(event) => setProfileImageUrl(event.target.value)} />
+                <FormField label="Profil Fotoğrafı URL" name="profileImageUrl" type="url" value={profileImageUrl} maxLength={500} placeholder="https://..." onChange={(event) => setProfileImageUrl(event.target.value)} />
                 <Button type="submit" disabled={isSaving}>
-                  {isSaving ? "Kaydediliyor..." : "Profili Guncelle"}
+                  {isSaving ? "Kaydediliyor..." : "Profili Güncelle"}
                 </Button>
               </form>
 
@@ -236,7 +236,7 @@ export function ProfilePage() {
                 <div><span>Ad Soyad</span><strong>{user.fullName}</strong></div>
                 <div><span>Email</span><strong>{user.email}</strong></div>
                 <div><span>Telefon</span><strong>{user.phoneNumber || "-"}</strong></div>
-                <div><span>Fotograf</span><strong>{user.profileImageUrl ? "Var" : "-"}</strong></div>
+                <div><span>Fotoğraf</span><strong>{user.profileImageUrl ? "Var" : "-"}</strong></div>
                 <div><span>Rol</span><strong>{user.role}</strong></div>
               </div>
             </div>
@@ -248,29 +248,29 @@ export function ProfilePage() {
                 <div className="verification-item">
                   <MailCheck size={22} />
                   <div>
-                    <strong>Email dogrulama</strong>
+                    <strong>Email doğrulama</strong>
                     <span>{user.email}</span>
                   </div>
                   <span className={user.emailConfirmed ? "status-chip success" : "status-chip warning"}>
-                    {user.emailConfirmed ? "Dogrulandi" : "Bekliyor"}
+                    {user.emailConfirmed ? "Doğrulandı" : "Bekliyor"}
                   </span>
                 </div>
                 <div className="verification-item">
                   <Phone size={22} />
                   <div>
-                    <strong>Telefon dogrulama</strong>
+                    <strong>Telefon doğrulama</strong>
                     <span>{user.phoneNumber || "Telefon eklenmedi"}</span>
                   </div>
                   <span className={user.phoneNumberConfirmed ? "status-chip success" : "status-chip warning"}>
-                    {user.phoneNumberConfirmed ? "Dogrulandi" : "Bekliyor"}
+                    {user.phoneNumberConfirmed ? "Doğrulandı" : "Bekliyor"}
                   </span>
                 </div>
               </div>
 
               <form className="form-panel" onSubmit={handleVerifyPhone}>
                 <div className="section-heading">
-                  <h2>Telefon Onayi</h2>
-                  <p>Development ortaminda SMS kodu ekranda gosterilir, production icin SMS provider baglanabilir.</p>
+                  <h2>Telefon Onayı</h2>
+                  <p>Development ortamında SMS kodu ekranda gösterilir, production için SMS provider bağlanabilir.</p>
                 </div>
                 {phoneCode && (
                   <div className="token-box">
@@ -278,12 +278,12 @@ export function ProfilePage() {
                     <strong>{phoneCode}</strong>
                   </div>
                 )}
-                <FormField label="Telefon Dogrulama Kodu" value={phoneCode} minLength={6} maxLength={6} onChange={(event) => setPhoneCode(event.target.value)} required />
+                <FormField label="Telefon Doğrulama Kodu" value={phoneCode} minLength={6} maxLength={6} onChange={(event) => setPhoneCode(event.target.value)} required />
                 <Button type="submit" variant="secondary" disabled={isPhoneSaving || !phoneNumber}>
-                  Telefonu Dogrula
+                  Telefonu Doğrula
                 </Button>
                 <Button type="button" variant="ghost" disabled={isPhoneSaving || !phoneNumber} onClick={handleRequestPhoneCode}>
-                  SMS Kodu Gonder
+                  SMS Kodu Gönder
                 </Button>
               </form>
             </div>
@@ -293,21 +293,21 @@ export function ProfilePage() {
             <div className="account-section">
               <form className="form-panel" onSubmit={handlePasswordChangeRequest}>
                 <div className="section-heading">
-                  <h2>Sifre Degisikligi</h2>
-                  <p>Yeni sifre, email onay linki tamamlanana kadar aktif olmaz.</p>
+                  <h2>Şifre Değişikliği</h2>
+                  <p>Yeni şifre, email onay linki tamamlanana kadar aktif olmaz.</p>
                 </div>
-                <FormField label="Mevcut Sifre" type="password" value={currentPassword} onChange={(event) => setCurrentPassword(event.target.value)} required />
-                <FormField label="Yeni Sifre" type="password" value={newPassword} minLength={6} onChange={(event) => setNewPassword(event.target.value)} required />
+                <FormField label="Mevcut Şifre" type="password" value={currentPassword} onChange={(event) => setCurrentPassword(event.target.value)} required />
+                <FormField label="Yeni Şifre" type="password" value={newPassword} minLength={6} onChange={(event) => setNewPassword(event.target.value)} required />
                 <Button type="submit" variant="secondary" disabled={isPasswordSaving}>
-                  Mail Onayi Iste
+                  Mail Onayı İste
                 </Button>
               </form>
 
               {(passwordChangeToken || currentPassword || newPassword) && (
                 <form className="form-panel" onSubmit={handlePasswordChangeConfirm}>
                   <div className="section-heading">
-                    <h2>Mail Onayi</h2>
-                    <p>Maildeki onay linki buraya tokeni otomatik yerlestirir.</p>
+                    <h2>Mail Onayı</h2>
+                    <p>Maildeki onay linki buraya tokeni otomatik yerleştirir.</p>
                   </div>
                   {passwordChangeToken && (
                     <div className="token-box">
@@ -317,14 +317,14 @@ export function ProfilePage() {
                   )}
                   <FormField label="Mail Onay Tokeni" value={passwordChangeToken} onChange={(event) => setPasswordChangeToken(event.target.value)} required />
                   <Button type="submit" disabled={isPasswordSaving || !passwordChangeToken}>
-                    Sifre Degisikligini Onayla
+                    Şifre Değişikliğini Onayla
                   </Button>
                 </form>
               )}
 
               <div className="security-note">
                 <CheckCircle2 size={20} />
-                <span>Sifreler BCrypt ile hashlenir, tokenlar veritabaninda hashli saklanir.</span>
+                <span>Şifreler BCrypt ile hashlenir, tokenlar veritabanında hashli saklanır.</span>
               </div>
             </div>
           )}

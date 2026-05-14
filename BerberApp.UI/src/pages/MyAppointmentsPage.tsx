@@ -61,17 +61,17 @@ export function MyAppointmentsPage() {
   return (
     <div className="center-page">
       <div className="page-heading">
-        <h1>{isBarber ? "Randevu Takvimi" : "Randevularim"}</h1>
+        <h1>{isBarber ? "Randevu Takvimi" : "Randevularım"}</h1>
         <p>
           {isBarber
-            ? "Bugun hangi musterilerin gelecegini ve tum randevu akisini buradan takip et."
-            : "Kendi randevularini takip et."}
+            ? "Bugün hangi müşterilerin geleceğini ve tüm randevu akışını buradan takip et."
+            : "Kendi randevularını takip et."}
         </p>
       </div>
 
       <div className="account-summary">
         <div className="summary-card">
-          <span>{isBarber ? "Bugunku musteri" : "Bugunku randevu"}</span>
+          <span>{isBarber ? "Bugünkü müşteri" : "Bugünkü randevu"}</span>
           <strong>{todayAppointments.length}</strong>
         </div>
         <div className="summary-card">
@@ -88,17 +88,17 @@ export function MyAppointmentsPage() {
       {message && <Notice type="success">{message}</Notice>}
 
       {appointments.length === 0 ? (
-        <Notice>{isBarber ? "Henuz sana ait randevu bulunmuyor." : "Henuz randevun bulunmuyor."}</Notice>
+        <Notice>{isBarber ? "Henüz sana ait randevu bulunmuyor." : "Henüz randevun bulunmuyor."}</Notice>
       ) : isBarber ? (
         <div className="account-shell">
           <div className="form-panel">
             <div className="section-heading">
-              <h2>Bugun Saat Saat</h2>
-              <p>Gunu gelen musteriler burada saat sirasiyla yukari cikar.</p>
+              <h2>Bugün Saat Saat</h2>
+              <p>Günü gelen müşteriler burada saat sırasıyla yukarı çıkar.</p>
             </div>
 
             {todayAppointments.length === 0 ? (
-              <Notice>Bugun icin planlanmis randevu yok.</Notice>
+              <Notice>Bugün için planlanmış randevu yok.</Notice>
             ) : (
               <div className="detail-list">
                 {todayAppointments.map((appointment) => (
@@ -119,18 +119,18 @@ export function MyAppointmentsPage() {
 
           <div className="form-panel">
             <div className="section-heading">
-              <h2>Ileri Tarihli Randevular</h2>
-              <p>Bugun olmayanlar asagida tablo halinde kalir.</p>
+              <h2>İleri Tarihli Randevular</h2>
+              <p>Bugün olmayanlar aşağıda tablo halinde kalır.</p>
             </div>
 
             {futureAppointments.length === 0 ? (
-              <Notice>Ileri tarihli randevu bulunmuyor.</Notice>
+              <Notice>İleri tarihli randevu bulunmuyor.</Notice>
             ) : (
               <div className="table-wrap">
                 <table>
                   <thead>
                     <tr>
-                      <th>Musteri</th>
+                      <th>Müşteri</th>
                       <th>Hizmet</th>
                       <th>Tarih</th>
                       <th>Saat</th>
@@ -158,7 +158,7 @@ export function MyAppointmentsPage() {
           <table>
             <thead>
               <tr>
-                <th>{isBarber ? "Musteri" : "Berber"}</th>
+                <th>{isBarber ? "Müşteri" : "Berber"}</th>
                 {isBarber && <th>Hizmet</th>}
                 <th>Tarih</th>
                 <th>Saat</th>

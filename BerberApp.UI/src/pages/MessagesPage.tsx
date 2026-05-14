@@ -22,14 +22,14 @@ export function MessagesPage() {
   const connectionRef = useRef<HubConnection | null>(null);
   const selectedConversationRef = useRef<Conversation | null>(null);
 
-  const title = isAdmin ? "Admin Mesajlari" : isBarber ? "Berber Mesajlari" : "Mesajlar";
+  const title = isAdmin ? "Admin Mesajları" : isBarber ? "Berber Mesajları" : "Mesajlar";
   const selectedTitle = selectedConversation
     ? isAdmin
       ? `${selectedConversation.userFullName} - ${selectedConversation.barberFullName}`
       : isBarber
         ? selectedConversation.userFullName
       : selectedConversation.barberFullName
-    : "Konusma sec";
+    : "Konuşma seç";
 
   useEffect(() => {
     selectedConversationRef.current = selectedConversation;
@@ -108,13 +108,13 @@ export function MessagesPage() {
     const token = getToken();
 
     if (!token) {
-      setError("Mesajlasma icin once giris yapmalisin.");
+      setError("Mesajlaşma için önce giriş yapmalısın.");
       return;
     }
 
     if (isTokenExpired(token)) {
       signOut();
-      setError("Oturum suresi dolmus. Lutfen tekrar giris yap.");
+      setError("Oturum süresi dolmuş. Lütfen tekrar giriş yap.");
       return;
     }
 
@@ -136,7 +136,7 @@ export function MessagesPage() {
       return connection
         .invoke("JoinConversation", activeConversationId)
         .then(() => setError(""))
-        .catch(() => setError("Konusma odasina baglanilamadi."));
+        .catch(() => setError("Konuşma odasına bağlanılamadı."));
     });
 
     connection
@@ -145,7 +145,7 @@ export function MessagesPage() {
         setError("");
         setHubReady(true);
       })
-      .catch(() => setError("SignalR baglantisi kurulamadi. Oturum suresi dolduysa tekrar giris yap."));
+      .catch(() => setError("SignalR bağlantısı kurulamadı. Oturum süresi dolduysa tekrar giriş yap."));
 
     return () => {
       setHubReady(false);
@@ -164,7 +164,7 @@ export function MessagesPage() {
       connection
         .invoke("JoinConversation", selectedConversation.id)
         .then(() => setError(""))
-        .catch(() => setError("Konusma odasina baglanilamadi."));
+        .catch(() => setError("Konuşma odasına bağlanılamadı."));
 
     join();
   }, [selectedConversation, hubReady]);
@@ -186,7 +186,7 @@ export function MessagesPage() {
 
       setContent("");
     } catch {
-      setError("Mesaj gonderilemedi.");
+      setError("Mesaj gönderilemedi.");
     }
   }
 
@@ -199,7 +199,7 @@ export function MessagesPage() {
       <div className="page-heading row-heading">
         <div>
           <h1>{title}</h1>
-          <p>{isAdmin ? "Kullanicilarin berber konusmalarini takip et." : isBarber ? "Kullanicilardan gelen mesajlari yanitla." : "Berberlerle anlik olarak yazis."}</p>
+          <p>{isAdmin ? "Kullanıcıların berber konuşmalarını takip et." : isBarber ? "Kullanıcılardan gelen mesajları yanıtla." : "Berberlerle anlık olarak yazış."}</p>
         </div>
       </div>
 
@@ -208,14 +208,14 @@ export function MessagesPage() {
           {error}
         </Notice>
       )}
-      {loading && <Notice>Konusmalar yukleniyor.</Notice>}
+      {loading && <Notice>Konuşmalar yükleniyor.</Notice>}
 
       <div className="chat-shell">
         <aside className="conversation-list">
           {sortedConversations.length === 0 && (
             <div className="empty-chat">
               <MessageCircle size={24} />
-              <span>Henuz konusma yok.</span>
+              <span>Henüz konuşma yok.</span>
             </div>
           )}
           {sortedConversations.map((conversation) => {
@@ -234,7 +234,7 @@ export function MessagesPage() {
               >
                 <strong>{isAdmin || isBarber ? conversation.userFullName : conversation.barberFullName}</strong>
                 <span>{secondaryLabel}</span>
-                <small>{conversation.lastMessage || "Konusma baslatildi"}</small>
+                <small>{conversation.lastMessage || "Konuşma başlatıldı"}</small>
                 {conversation.unreadCount > 0 && <em>{conversation.unreadCount}</em>}
               </button>
             );
@@ -244,7 +244,7 @@ export function MessagesPage() {
         <section className="chat-panel">
           <header className="chat-header">
             <div>
-              <span className="muted">Aktif konusma</span>
+              <span className="muted">Aktif konuşma</span>
               <strong>{selectedTitle}</strong>
             </div>
           </header>
@@ -253,7 +253,7 @@ export function MessagesPage() {
             {!selectedConversation && (
               <div className="empty-chat">
                 <MessageCircle size={28} />
-                <span>Mesajlari gormek icin konusma sec.</span>
+                <span>Mesajları görmek için konuşma seç.</span>
               </div>
             )}
             {messages.map((message) => (
@@ -268,7 +268,7 @@ export function MessagesPage() {
           <form className="message-form" onSubmit={handleSend}>
             <input
               aria-label="Mesaj"
-              placeholder={selectedConversation ? "Mesaj yaz..." : "Once konusma sec"}
+              placeholder={selectedConversation ? "Mesaj yaz..." : "Önce konuşma seç"}
               value={content}
               onChange={(event) => setContent(event.target.value)}
               disabled={!selectedConversation}

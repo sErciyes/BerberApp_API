@@ -16,14 +16,14 @@ export function VerifyEmailPage() {
     const token = searchParams.get("token") ?? "";
 
     if (!email || !token) {
-      setError("Email dogrulama linki eksik veya hatali.");
+      setError("Email doğrulama linki eksik veya hatalı.");
       setLoading(false);
       return;
     }
 
     verifyEmail({ email, token })
       .then((response) => {
-        setSuccess(response.data?.message ?? response.message ?? "Email dogrulandi. Giris yapabilirsin.");
+        setSuccess(response.data?.message ?? response.message ?? "Email doğrulandı. Giriş yapabilirsin.");
       })
       .catch((err) => setError(getErrorMessage(err)))
       .finally(() => setLoading(false));
@@ -34,15 +34,15 @@ export function VerifyEmailPage() {
       <section className="auth-hero">
         <div className="auth-kicker">
           <MailCheck size={17} />
-          Email dogrulama
+          Email doğrulama
         </div>
-        <h1>Hesabini tek tikla aktiflestir.</h1>
-        <p>Mailindeki dogrulama linki BerberApp API tarafindan kontrol edilir ve hesap girise acilir.</p>
+        <h1>Hesabını tek tıkla aktifleştir.</h1>
+        <p>Mailindeki doğrulama linki BerberApp API tarafından kontrol edilir ve hesap girişe açılır.</p>
 
         <div className="auth-metrics">
           <div>
             <strong>24 saat</strong>
-            <span>Link suresi</span>
+            <span>Link süresi</span>
           </div>
           <div>
             <strong>Hash</strong>
@@ -56,7 +56,7 @@ export function VerifyEmailPage() {
 
         <div className="auth-feature">
           <ShieldCheck size={18} />
-          Dogrulama tokeni veritabaninda hashli tutulur
+          Doğrulama tokeni veritabanında hashli tutulur
         </div>
         <div className="auth-feature">
           <Sparkles size={18} />
@@ -67,16 +67,16 @@ export function VerifyEmailPage() {
       <section className="auth-card">
         <div className="auth-card-header">
           <span>Hesap aktivasyonu</span>
-          <h2>{loading ? "Dogrulaniyor" : "Dogrulama sonucu"}</h2>
-          <p>Link bilgileri backend tarafinda kontrol ediliyor.</p>
+          <h2>{loading ? "Doğrulanıyor" : "Doğrulama sonucu"}</h2>
+          <p>Link bilgileri backend tarafında kontrol ediliyor.</p>
         </div>
 
-        {loading && <Notice>Mail dogrulama islemi yapiliyor...</Notice>}
+        {loading && <Notice>Mail doğrulama işlemi yapılıyor...</Notice>}
         {error && <Notice type="error">{error}</Notice>}
         {success && <Notice type="success">{success}</Notice>}
 
         <p className="form-note">
-          <Link to="/login">Giris ekranina don</Link>
+          <Link to="/login">Giriş ekranına dön</Link>
         </p>
       </section>
     </div>

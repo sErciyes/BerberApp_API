@@ -35,7 +35,7 @@ export function useTheme() {
   const context = useContext(ThemeContext);
 
   if (!context) {
-    throw new Error("useTheme ThemeProvider icinde kullanilmalidir.");
+    throw new Error("useTheme ThemeProvider içinde kullanılmalıdır.");
   }
 
   return context;
